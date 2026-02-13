@@ -179,6 +179,9 @@ public partial class FenceControl : System.Windows.Controls.UserControl
         Canvas.SetLeft(this, vm.X);
         Canvas.SetTop(this, vm.Y);
 
+        // Force Z-order during drag to stay in the desktop layer
+        (Window.GetWindow(this) as MainWindow)?.RefreshZOrder();
+
         _dragStartPoint = current;
     }
 
@@ -1027,11 +1030,9 @@ public partial class FenceControl : System.Windows.Controls.UserControl
 
     private void ApplySnapping(ref double x, ref double y, ref double w, ref double h, bool isResizing = false)
     {
-        Rect workArea = new Rect(
-            SystemParameters.VirtualScreenLeft,
-            SystemParameters.VirtualScreenTop,
-            SystemParameters.VirtualScreenWidth,
-            SystemParameters.VirtualScreenHeight);
+        // Use local coordinates (0 to VirtualScreenWidth/Height)
+        // because MainWindow is already positioned/resized to cover the entire virtual desktop.
+        Rect workArea = new Rect(0, 0, SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
 
         // 1. Snap to screen edges
         // Horizontal

@@ -13,10 +13,10 @@ public static class DesktopEmbedder
 {
     // P/Invoke definitions
     [DllImport("user32.dll", SetLastError = true)]
-    private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+    private static extern IntPtr FindWindow(string? lpClassName, string? lpWindowName);
 
     [DllImport("user32.dll", SetLastError = true)]
-    private static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
+    private static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string? className, string? windowTitle);
 
     [DllImport("user32.dll", SetLastError = true)]
     private static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
@@ -59,7 +59,7 @@ public static class DesktopEmbedder
                 // Set as WS_CHILD to become a truly integrated part of the desktop
                 int style = Helpers.Win32Api.GetWindowLong(hwnd, Helpers.Win32Api.GWL_STYLE);
                 style |= 0x40000000; // WS_CHILD
-                style &= ~0x80000000; // Remove WS_POPUP
+                style &= unchecked((int)~0x80000000); // Remove WS_POPUP (unchecked for overflow)
                 Helpers.Win32Api.SetWindowLong(hwnd, Helpers.Win32Api.GWL_STYLE, style);
 
                 SetParent(hwnd, workerw);
@@ -100,34 +100,54 @@ public static class DesktopEmbedder
         IntPtr result = IntPtr.Zero;
         
         // Send 0x052C to Progman. This message instructs the OS to spawn a WorkerW behind the desktop icons.
-        // If it already exists, this message does nothing but ensures the structure is correct.
         SendMessageTimeout(progman, WM_SPAWN_WORKER, IntPtr.Zero, IntPtr.Zero, 0, 1000, out result);
 
-        // 2. Find the WorkerW that is the Next Sibling of the WorkerW containing SHELLDLL_DefView.
-        // The structure is usually:
-        // Top Level Windows...
-        // ...
-        // WorkerW (This one holds the wallpaper!)
-        // WorkerW (This one holds SHELLDLL_DefView - the icons)
-        // ...
-        
         IntPtr workerw = IntPtr.Zero;
 
+        // 2. Find the WorkerW that is the BEHIND the desktop icons (SHELLDLL_DefView).
         EnumWindows((hwnd, lParam) =>
         {
-            // Check if this window is a WorkerW and has SHELLDLL_DefView as child
             IntPtr shell = FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null);
             if (shell != IntPtr.Zero)
             {
                 // Found the WorkerW that holds the icons.
-                // The WorkerW BEHIND this one is the one we want (Wallpaper container).
+                // The WorkerW BEHIND (sibling after) this one is the wallpaper container we want.
                 workerw = FindWindowEx(IntPtr.Zero, hwnd, "WorkerW", null);
             }
             return true;
         }, IntPtr.Zero);
 
+        // 3. Fallback: If the above failed (can happen on some versions/states), 
+        // try to find ANY WorkerW that doesn't have SHELLDLL_DefView.
+        if (workerw == IntPtr.Zero)
+        {
+            EnumWindows((hwnd, lParam) =>
+            {
+                if (GetWindowClassName(hwnd) == "WorkerW")
+                {
+                    IntPtr shell = FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null);
+                    if (shell == IntPtr.Zero)
+                    {
+                        workerw = hwnd;
+                        return false; // Found one!
+                    }
+                }
+                return true;
+            }, IntPtr.Zero);
+        }
+
         return workerw;
     }
+
+    private static string GetWindowClassName(IntPtr hwnd)
+    {
+        var sb = new System.Text.StringBuilder(256);
+        GetClassName(hwnd, sb, sb.Capacity);
+        return sb.ToString();
+    }
+
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    private static extern int GetClassName(IntPtr hWnd, System.Text.StringBuilder lpClassName, int nMaxCount);
 
     public static void Detach(Window window)
     {

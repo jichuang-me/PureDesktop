@@ -19,9 +19,12 @@
     </Window.Resources>
 
     <!-- Full-screen transparent canvas, fences float on the real desktop -->
+    <!-- Full-screen transparent canvas, fences float on the real desktop -->
     <Canvas x:Name="DesktopCanvas"
             Background="Transparent"
             ClipToBounds="False"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
             MouseMove="OnGlobalMouseMove">
 
         <Canvas.ContextMenu>

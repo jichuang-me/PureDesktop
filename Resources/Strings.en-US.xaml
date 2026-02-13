@@ -32,8 +32,6 @@
     <system:String x:Key="Tray_Exit">Exit</system:String>
     <!-- Settings -->
     <system:String x:Key="Tab_General">General</system:String>
-    <system:String x:Key="Menu_Settings">Settings</system:String>
-    <system:String x:Key="Tab_General">General</system:String>
     <system:String x:Key="Tab_Exclusions">Exclusions</system:String>
     <system:String x:Key="Tab_About">About</system:String>
     <system:String x:Key="Group_Appearance">Appearance</system:String>

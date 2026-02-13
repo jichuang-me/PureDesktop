@@ -1,0 +1,33 @@
+﻿  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\DesktopEmbedder.cs(62,17): error CS0266: 无法将类型“uint”隐式转换为“int”。存在一个显式转换(是否缺少强制转换?) [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\DesktopEmbedder.cs(99,48): warning CS8625: 无法将 null 字面量转换为非 null 的引用类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\DesktopEmbedder.cs(110,80): warning CS8625: 无法将 null 字面量转换为非 null 的引用类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\DesktopEmbedder.cs(115,70): warning CS8625: 无法将 null 字面量转换为非 null 的引用类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\DesktopEmbedder.cs(128,88): warning CS8625: 无法将 null 字面量转换为非 null 的引用类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\ShellContextMenu.cs(100,42): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\ShellContextMenu.cs(101,41): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\ShellContextMenu.cs(102,40): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\ShellContextMenu.cs(113,37): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Views\FenceControl.xaml.cs(899,44): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Views\FenceControl.xaml.cs(905,41): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+CSC : warning WFAC010: 从 C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\app.manifest 中删除高 DPI 设置，并通过 Application.SetHighDpiMode API 或“ApplicationHighDpiMode”项目属性进行配置 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+
+生成失败。
+
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\DesktopEmbedder.cs(99,48): warning CS8625: 无法将 null 字面量转换为非 null 的引用类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\DesktopEmbedder.cs(110,80): warning CS8625: 无法将 null 字面量转换为非 null 的引用类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\DesktopEmbedder.cs(115,70): warning CS8625: 无法将 null 字面量转换为非 null 的引用类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\DesktopEmbedder.cs(128,88): warning CS8625: 无法将 null 字面量转换为非 null 的引用类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\ShellContextMenu.cs(100,42): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\ShellContextMenu.cs(101,41): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\ShellContextMenu.cs(102,40): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\ShellContextMenu.cs(113,37): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Views\FenceControl.xaml.cs(899,44): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Views\FenceControl.xaml.cs(905,41): warning CS8600: 将 null 文本或可能的 null 值转换为不可为 null 类型。 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+CSC : warning WFAC010: 从 C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\app.manifest 中删除高 DPI 设置，并通过 Application.SetHighDpiMode API 或“ApplicationHighDpiMode”项目属性进行配置 [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\Core\DesktopEmbedder.cs(62,17): error CS0266: 无法将类型“uint”隐式转换为“int”。存在一个显式转换(是否缺少强制转换?) [C:\Users\jichu\OneDrive - onoffices\AI产品\Tidy-desktop\PureDesktop\PureDesktop_dzs5vkpo_wpftmp.csproj]
+    11 个警告
+    1 个错误
+
+已用时间 00:00:01.24

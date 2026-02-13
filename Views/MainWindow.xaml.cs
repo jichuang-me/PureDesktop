@@ -129,10 +129,12 @@ public partial class MainWindow : Window
     private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
         const int WM_WINDOWPOSCHANGING = 0x0046;
+        const int WM_DISPLAYCHANGE = 0x007E;
+        const int WM_SETTINGCHANGE = 0x001A;
 
-        if (msg == _wmTaskbarCreated)
+        if (msg == _wmTaskbarCreated || msg == WM_DISPLAYCHANGE || msg == WM_SETTINGCHANGE)
         {
-            // Explorer restarted, re-embed and fix Z-order
+            // Explorer restarted or resolution/wallpaper changed, re-embed and fix Z-order
             EmbedToDesktop();
         }
         else if (msg == WM_WINDOWPOSCHANGING)
@@ -142,7 +144,12 @@ public partial class MainWindow : Window
             var pos = Marshal.PtrToStructure<WINDOWPOS>(lParam);
             pos.hwndInsertAfter = Helpers.Win32Api.HWND_TOP;
             pos.flags &= ~(uint)Helpers.Win32Api.SWP_NOZORDER;
-            Marshal.StructureToPtr(pos, lParam, false);
+            
+            // Critical: Ensure it's not being hidden/minimized by system actions (Win+D)
+            pos.flags &= ~(uint)Helpers.Win32Api.SWP_HIDEWINDOW;
+            pos.flags |= Helpers.Win32Api.SWP_SHOWWINDOW;
+            
+            Marshal.StructureToPtr(pos, lParam, fDeleteOld: false);
         }
         return IntPtr.Zero;
     }
@@ -170,21 +177,27 @@ public partial class MainWindow : Window
 
             // Robust: Recurring Check (Every 2s) to handle wallpaper/resolution changes
             var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
-            timer.Tick += (s, e) =>
-            {
-               if(Application.Current.MainWindow != null)
-               {
-                   // Try to re-embed (cheap if already parented)
-                   if (DesktopEmbedder.Embed(this)) return;
-
-                   // If failed (no WorkerW?), force Bottom Z-Order
-                   var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
-                   PureDesktop.Helpers.Win32Api.SetWindowPos(hwnd, new IntPtr(1), 0, 0, 0, 0, 
-                       PureDesktop.Helpers.Win32Api.SWP_NOMOVE | PureDesktop.Helpers.Win32Api.SWP_NOSIZE | PureDesktop.Helpers.Win32Api.SWP_NOACTIVATE);
-               }
-            };
+            timer.Tick += (s, e) => { RefreshZOrder(); };
             timer.Start();
         }), System.Windows.Threading.DispatcherPriority.Loaded);
+    }
+
+    /// <summary>
+    /// Forces the window to the correct Z-order within the desktop environment.
+    /// Called periodically and during drags.
+    /// </summary>
+    public void RefreshZOrder()
+    {
+        if (Application.Current?.MainWindow == null) return;
+
+        // Try to re-embed if parent was lost/changed (e.g. desktop switching)
+        if (DesktopEmbedder.Embed(this)) return;
+
+        // If failed (no WorkerW?), force Bottom Z-Order as fallback
+        var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+        PureDesktop.Helpers.Win32Api.SetWindowPos(hwnd, new IntPtr(1), 0, 0, 0, 0, 
+            PureDesktop.Helpers.Win32Api.SWP_NOMOVE | PureDesktop.Helpers.Win32Api.SWP_NOSIZE | 
+            PureDesktop.Helpers.Win32Api.SWP_NOACTIVATE | PureDesktop.Helpers.Win32Api.SWP_NOOWNERZORDER);
     }
 
     // ─── Double-click desktop to toggle fences ────────────────────
