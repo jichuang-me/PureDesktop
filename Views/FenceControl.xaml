@@ -1,0 +1,547 @@
+<UserControl x:Class="PureDesktop.Views.FenceControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:PureDesktop.ViewModels"
+             Width="{Binding Width}" Height="{Binding Height}"
+             MouseEnter="OnMouseEnter" MouseLeave="OnMouseLeave"
+             AllowDrop="True" Drop="OnDrop" DragOver="OnDragOver">
+
+    <UserControl.Resources>
+        <!-- Narrow scrollbar style (4px, 6px on hover) -->
+        <Style x:Key="NarrowScrollBar" TargetType="ScrollBar">
+            <Setter Property="Width" Value="4" />
+            <Setter Property="MinWidth" Value="4" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid>
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border x:Name="ThumbBorder"
+                                                        CornerRadius="2"
+                                                        Background="{DynamicResource ScrollBarBrush}"
+                                                        Width="4"
+                                                        MinHeight="20"
+                                                        Margin="0,1" />
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ThumbBorder" Property="Width" Value="6" />
+                                                        <Setter TargetName="ThumbBorder" Property="CornerRadius" Value="3" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="HoverScrollViewer" TargetType="ScrollViewer">
+            <Setter Property="VerticalScrollBarVisibility" Value="Hidden" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                    <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Grid (icon) view item template -->
+        <DataTemplate x:Key="GridItemTemplate" DataType="{x:Type vm:FenceItemViewModel}">
+            <Border x:Name="ItemBorder"
+                    Width="68" Height="76" Margin="1"
+                    CornerRadius="5"
+                    Background="Transparent"
+                    Cursor="Hand"
+                    MouseLeftButtonDown="OnItemMouseDown"
+                    MouseRightButtonUp="OnItemMouseRightButtonUp"
+                    MouseMove="OnItemMouseMove">
+                <Border.ToolTip>
+                    <ToolTip MaxWidth="360">
+                        <TextBlock Text="{Binding PreviewText}" TextWrapping="Wrap"
+                                   FontFamily="Segoe UI" FontSize="12" />
+                    </ToolTip>
+                </Border.ToolTip>
+
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Image Source="{Binding Icon}"
+                           Width="{DynamicResource ItemIconSize}"
+                           Height="{DynamicResource ItemIconSize}"
+                           Stretch="Uniform"
+                           HorizontalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+                    <Grid Margin="0,3,0,0">
+                        <TextBlock x:Name="NameBlock"
+                                   Text="{Binding Name}"
+                                   Foreground="{DynamicResource TextPrimary}"
+                                   FontSize="{DynamicResource ItemFontSize}"
+                                   TextAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   MaxWidth="64"
+                                   MaxHeight="36"
+                                   VerticalAlignment="Top"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   LineHeight="13" />
+                        <TextBox x:Name="RenameBox"
+                                 Text="{Binding RenameText, UpdateSourceTrigger=PropertyChanged}"
+                                 Visibility="Collapsed"
+                                 FontSize="{DynamicResource ItemFontSize}"
+                                 TextAlignment="Center"
+                                 MaxWidth="80"
+                                 AcceptsReturn="False"
+                                 IsVisibleChanged="OnRenameTextBoxVisible"
+                                 PreviewKeyDown="OnRenameTextBoxKeyDown"
+                                 LostFocus="OnRenameTextBoxLostFocus" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="ItemBorder" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="ItemBorder" Property="Background"
+                            Value="{DynamicResource HoverBrush}" />
+                </Trigger>
+                <DataTrigger Binding="{Binding IsRenaming}" Value="True">
+                    <Setter TargetName="NameBlock" Property="Visibility" Value="Collapsed" />
+                    <Setter TargetName="RenameBox" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <!-- Hide normal content for group headers -->
+                <DataTrigger Binding="{Binding IsGroupHeader}" Value="True">
+                    <Setter TargetName="ItemBorder" Property="Width" Value="Auto" />
+                    <Setter TargetName="ItemBorder" Property="Height" Value="22" />
+                    <Setter TargetName="ItemBorder" Property="Cursor" Value="Arrow" />
+                    <Setter TargetName="ItemBorder" Property="Background" Value="Transparent" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- List view item template -->
+        <DataTemplate x:Key="ListItemTemplate" DataType="{x:Type vm:FenceItemViewModel}">
+            <!-- Group Header rendering -->
+            <Border x:Name="ListItemBorder"
+                    Height="26" Margin="0,0,0,0"
+                    Padding="6,0"
+                    CornerRadius="4"
+                    Background="Transparent"
+                    Cursor="Hand"
+                    MouseLeftButtonDown="OnItemMouseDown"
+                    MouseRightButtonUp="OnItemMouseRightButtonUp"
+                    MouseMove="OnItemMouseMove">
+                <Border.ToolTip>
+                    <ToolTip MaxWidth="360">
+                        <TextBlock Text="{Binding PreviewText}" TextWrapping="Wrap"
+                                   FontFamily="Segoe UI" FontSize="12" />
+                    </ToolTip>
+                </Border.ToolTip>
+
+                <Grid x:Name="FileRow" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Source="{Binding Icon}"
+                           Width="{DynamicResource ListItemIconSize}"
+                           Height="{DynamicResource ListItemIconSize}"
+                           Stretch="Uniform"
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           Margin="0,0,6,0" />
+
+                    <Grid Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock x:Name="ItemNameText" Text="{Binding Name}"
+                                   Foreground="{DynamicResource TextPrimary}"
+                                   FontSize="{DynamicResource ListItemFontSize}"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis" />
+                        <TextBox x:Name="RenameBox"
+                                 Text="{Binding RenameText, UpdateSourceTrigger=PropertyChanged}"
+                                 Visibility="Collapsed"
+                                 FontSize="{DynamicResource ListItemFontSize}"
+                                 VerticalAlignment="Center"
+                                 IsVisibleChanged="OnRenameTextBoxVisible"
+                                 PreviewKeyDown="OnRenameTextBoxKeyDown"
+                                 LostFocus="OnRenameTextBoxLostFocus" />
+                    </Grid>
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <Trigger SourceName="ListItemBorder" Property="IsMouseOver" Value="True">
+                    <Setter TargetName="ListItemBorder" Property="Background"
+                            Value="{DynamicResource HoverBrush}" />
+                </Trigger>
+                <!-- Group header style -->
+                <DataTrigger Binding="{Binding IsGroupHeader}" Value="True">
+                    <Setter TargetName="ListItemBorder" Property="Cursor" Value="Arrow" />
+                    <Setter TargetName="ListItemBorder" Property="Margin" Value="0,6,0,2" />
+                    <Setter TargetName="ListItemBorder" Property="Padding" Value="4,0" />
+                    <Setter TargetName="ListItemBorder" Property="BorderThickness" Value="0,0,0,1" />
+                    <Setter TargetName="ListItemBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                    <Setter TargetName="ItemNameText" Property="Text" Value="{Binding GroupLabel}" />
+                    <Setter TargetName="ItemNameText" Property="FontWeight" Value="SemiBold" />
+                    <Setter TargetName="ItemNameText" Property="FontSize" Value="11" />
+                    <Setter TargetName="ItemNameText" Property="Foreground" Value="{DynamicResource TextSecondary}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <!-- Main Container with rounded corners and semi-transparent background -->
+    <Border x:Name="FenceBorder"
+            CornerRadius="{DynamicResource FenceCornerRadius}"
+            Background="{DynamicResource FenceBackground}"
+            BorderBrush="{DynamicResource FenceBorder}"
+            BorderThickness="0.6"
+            ClipToBounds="True"
+            SnapsToDevicePixels="True">
+
+        <Border.Effect>
+            <DropShadowEffect ShadowDepth="1" BlurRadius="8" Opacity="0.12" Color="Black" />
+        </Border.Effect>
+
+        <Grid Background="Transparent">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="20" />
+            </Grid.RowDefinitions>
+
+            <!-- ─── Title Bar (visible on hover) ─── -->
+            <Border x:Name="TitleBar" Grid.Row="0"
+                    Background="{DynamicResource FenceTitleBar}"
+                    Opacity="0"
+                    MouseLeftButtonDown="OnTitleBarMouseDown"
+                    Cursor="SizeAll">
+
+                <Grid Margin="8,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Title: double-click to rename in-place -->
+                    <TextBlock x:Name="TitleText" Grid.Column="0"
+                               Text="{Binding Title}"
+                               Foreground="{DynamicResource TextPrimary}"
+                               FontSize="{DynamicResource FenceTitleFontSize}"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis"
+                               MouseLeftButtonDown="OnTitleDoubleClick"
+                               Cursor="Hand" />
+
+                    <!-- Inline rename TextBox (hidden by default) -->
+                    <TextBox x:Name="TitleEditBox" Grid.Column="0"
+                             Visibility="Collapsed"
+                             FontSize="{DynamicResource FenceTitleFontSize}"
+                             FontWeight="SemiBold"
+                             VerticalAlignment="Center"
+                             Padding="0" Margin="0,-1,4,0"
+                             BorderThickness="0,0,0,1"
+                             BorderBrush="{DynamicResource AccentBrush}"
+                             Background="Transparent"
+                             Foreground="{DynamicResource TextPrimary}"
+                             LostFocus="OnTitleEditLostFocus"
+                             KeyDown="OnTitleEditKeyDown" />
+
+                    <!-- Sort button -->
+                    <Button x:Name="SortBtn" Grid.Column="1"
+                            Content="↕"
+                            Background="Transparent" BorderThickness="0"
+                            Foreground="{DynamicResource TextSecondary}"
+                            FontSize="12" Width="24" Height="24"
+                            VerticalAlignment="Center" Cursor="Hand"
+                            ToolTip="{DynamicResource Fence_Sort}"
+                            Click="OnSortBtnClick">
+                        <Button.ContextMenu>
+                            <ContextMenu x:Name="SortMenu">
+                                <MenuItem Header="{DynamicResource Sort_ByName}" Click="OnSortByName" />
+                                <MenuItem Header="{DynamicResource Sort_ByType}" Click="OnSortByType" />
+                                <MenuItem Header="{DynamicResource Sort_ByDate}" Click="OnSortByDate" />
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="BtnBorder" Background="Transparent"
+                                        CornerRadius="4" Padding="3,2">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="Background"
+                                                Value="{DynamicResource HoverBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Classify button (separate from sort) -->
+                    <Button x:Name="ClassifyBtn" Grid.Column="2"
+                            Content="🗂"
+                            Background="Transparent" BorderThickness="0"
+                            Foreground="{DynamicResource TextSecondary}"
+                            FontSize="11" Width="24" Height="24"
+                            VerticalAlignment="Center" Cursor="Hand"
+                            ToolTip="{DynamicResource Fence_Classify}"
+                            Click="OnClassifyBtnClick">
+                        <Button.ContextMenu>
+                            <ContextMenu x:Name="ClassifyMenu">
+                                <MenuItem Header="{DynamicResource Group_ByType}" Click="OnGroupByType" />
+                                <MenuItem Header="{DynamicResource Group_ByDate}" Click="OnGroupByDate" />
+                                <Separator />
+                                <MenuItem Header="{DynamicResource Group_None}" Click="OnGroupNone" />
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="BtnBorder" Background="Transparent"
+                                        CornerRadius="4" Padding="3,2">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="Background"
+                                                Value="{DynamicResource HoverBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- View mode toggle button -->
+                    <Button x:Name="ViewModeBtn" Grid.Column="3"
+                            Content="☰"
+                            Click="OnViewModeClick"
+                            Background="Transparent" BorderThickness="0"
+                            Foreground="{DynamicResource TextSecondary}"
+                            FontSize="11" Width="24" Height="24"
+                            VerticalAlignment="Center" Cursor="Hand"
+                            ToolTip="{DynamicResource Fence_ViewList}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="BtnBorder" Background="Transparent"
+                                        CornerRadius="4" Padding="3,2">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="Background"
+                                                Value="{DynamicResource HoverBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Lock button -->
+                    <Button x:Name="LockBtn" Grid.Column="4"
+                            Click="OnLockClick"
+                            Background="Transparent" BorderThickness="0"
+                            Foreground="{DynamicResource TextSecondary}"
+                            FontSize="11" Width="24" Height="24"
+                            VerticalAlignment="Center" Cursor="Hand"
+                            ToolTip="{DynamicResource Fence_Lock}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="BtnBorder" Background="Transparent"
+                                        CornerRadius="4" Padding="3,2">
+                                    <TextBlock x:Name="LockIcon" Text="🔓" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="Background"
+                                                Value="{DynamicResource HoverBrush}" />
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding IsLocked}" Value="True">
+                                        <Setter TargetName="LockIcon" Property="Text" Value="🔒" />
+                                        <Setter Property="ToolTip" Value="{DynamicResource Fence_Unlock}" />
+                                    </DataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Collapse/Expand button -->
+                    <Button x:Name="CollapseBtn" Grid.Column="5"
+                            Content="━"
+                            Click="OnCollapseClick"
+                            Background="Transparent" BorderThickness="0"
+                            Foreground="{DynamicResource TextSecondary}"
+                            FontSize="9" Width="24" Height="24"
+                            VerticalAlignment="Center" Cursor="Hand"
+                            ToolTip="{DynamicResource Fence_Collapse}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="BtnBorder" Background="Transparent"
+                                        CornerRadius="4" Padding="3,2">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="Background"
+                                                Value="{DynamicResource HoverBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Delete fence button -->
+                    <Button x:Name="DeleteBtn" Grid.Column="6"
+                            Content="✕"
+                            Click="OnDeleteClick"
+                            Background="Transparent" BorderThickness="0"
+                            Foreground="{DynamicResource TextSecondary}"
+                            FontSize="10" Width="24" Height="24"
+                            VerticalAlignment="Center" Cursor="Hand"
+                            ToolTip="{DynamicResource Fence_Remove}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="BtnBorder" Background="Transparent"
+                                        CornerRadius="4" Padding="3,2">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="Background"
+                                                Value="#30FF0000" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- ─── Content Area ─── -->
+            <!-- Grid View -->
+            <ListBox x:Name="FenceGridBox" Grid.Row="1"
+                     ItemsSource="{Binding Items}"
+                     ItemTemplate="{StaticResource GridItemTemplate}"
+                     Visibility="Collapsed"
+                     SelectionMode="Extended"
+                     PreviewKeyDown="OnPreviewKeyDown"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     Padding="4,2"
+                     Background="Transparent"
+                     BorderThickness="0">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+
+            <!-- List View -->
+            <ListBox x:Name="FenceListBox" Grid.Row="1"
+                     ItemsSource="{Binding Items}"
+                     ItemTemplate="{StaticResource ListItemTemplate}"
+                     Visibility="Visible"
+                     SelectionMode="Extended"
+                     PreviewKeyDown="OnPreviewKeyDown"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     VirtualizingPanel.IsVirtualizing="True"
+                     VirtualizingPanel.VirtualizationMode="Recycling"
+                     ScrollViewer.CanContentScroll="True"
+                     Padding="4,2"
+                     Background="Transparent"
+                     BorderThickness="0">
+                <ListBox.ItemContainerStyle>
+                     <Style TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+
+            <!-- ─── Status bar ─── -->
+            <Border Grid.Row="2" x:Name="StatusBar"
+                    Background="Transparent" Padding="8,0">
+                <TextBlock x:Name="StatusText"
+                           Foreground="{DynamicResource TextSecondary}"
+                           FontSize="10" VerticalAlignment="Center"
+                           Opacity="0.7" />
+            </Border>
+
+            <!-- ─── Resize grips (visible on hover) ─── -->
+            <!-- Right edge -->
+            <Thumb x:Name="ResizeRight" Grid.RowSpan="3"
+                   HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                   Width="5" Cursor="SizeWE" Opacity="0"
+                   DragDelta="OnResizeRight" DragCompleted="OnResizeCompleted">
+                <Thumb.Template>
+                    <ControlTemplate><Border Background="Transparent" /></ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+            <!-- Bottom edge (Moved to Row 2) -->
+            <Thumb x:Name="ResizeBottom" Grid.Row="2"
+                   HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+                   Height="6" Cursor="SizeNS" Opacity="0"
+                   DragDelta="OnResizeBottom" DragCompleted="OnResizeCompleted">
+                <Thumb.Template>
+                    <ControlTemplate><Border Background="Transparent" /></ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+            <!-- Bottom-right corner (Moved to Row 2) -->
+            <Thumb x:Name="ResizeCorner" Grid.Row="2"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                   Width="12" Height="12" Cursor="SizeNWSE" Opacity="0"
+                   DragDelta="OnResizeCorner" DragCompleted="OnResizeCompleted">
+                <Thumb.Template>
+                    <ControlTemplate><Border Background="Transparent" /></ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+            <!-- Left edge -->
+            <Thumb x:Name="ResizeLeft" Grid.RowSpan="3"
+                   HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                   Width="5" Cursor="SizeWE" Opacity="0"
+                   DragDelta="OnResizeLeft" DragCompleted="OnResizeCompleted">
+                <Thumb.Template>
+                    <ControlTemplate><Border Background="Transparent" /></ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+            <!-- Top edge -->
+            <Thumb x:Name="ResizeTop" Grid.Row="0"
+                   HorizontalAlignment="Stretch" VerticalAlignment="Top"
+                   Height="5" Cursor="SizeNS" Opacity="0"
+                   DragDelta="OnResizeTop" DragCompleted="OnResizeCompleted">
+                <Thumb.Template>
+                    <ControlTemplate><Border Background="Transparent" /></ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+        </Grid>
+    </Border>
+</UserControl>

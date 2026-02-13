@@ -1,0 +1,121 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- ─── English (en-US) ──────────────────────────────────── -->
+    <system:String x:Key="AppName">PureDesktop</system:String>
+
+    <!-- Tray Menu -->
+    <system:String x:Key="Tray_AutoOrganize">Organize Desktop</system:String>
+    <system:String x:Key="Tray_AddMappedFence">Add Mapped Fence</system:String>
+    <system:String x:Key="Tray_Settings">Settings</system:String>
+    <system:String x:Key="Tray_GroupFences">Fences</system:String>
+    <system:String x:Key="Tray_GroupAppearance">Appearance</system:String>
+    <system:String x:Key="Tray_GroupSettings">System</system:String>
+    <system:String x:Key="Tray_Language">Language</system:String>
+    <system:String x:Key="Tray_Chinese">简体中文</system:String>
+    <system:String x:Key="Tray_English">English</system:String>
+    <system:String x:Key="Tray_Theme">Theme</system:String>
+    <system:String x:Key="Tray_ThemeSystem">Follow System</system:String>
+    <system:String x:Key="Tray_ThemeLight">Light</system:String>
+    <system:String x:Key="Tray_ThemeDark">Dark</system:String>
+    <system:String x:Key="Tray_Opacity">Opacity</system:String>
+    <system:String x:Key="Tray_AccentColor">Accent Color</system:String>
+    <system:String x:Key="Tray_Behavior">Behavior</system:String>
+    <system:String x:Key="Tray_AutoStart">Run on Startup</system:String>
+    <system:String x:Key="Tray_AutoHide">Auto-Hide</system:String>
+    <system:String x:Key="Tray_Exclusions">Exclusions</system:String>
+    <system:String x:Key="Tray_ShowTrayIcon">Show Tray Icon</system:String>
+    <system:String x:Key="Tray_About">About</system:String>
+    <system:String x:Key="Tray_Manual">Manual</system:String>
+    <system:String x:Key="Copyright">Copyright © 2026 jichuang</system:String>
+    <system:String x:Key="Tray_Exit">Exit</system:String>
+    <!-- Settings -->
+    <system:String x:Key="Tab_General">General</system:String>
+    <system:String x:Key="Menu_Settings">Settings</system:String>
+    <system:String x:Key="Tab_General">General</system:String>
+    <system:String x:Key="Tab_Exclusions">Exclusions</system:String>
+    <system:String x:Key="Tab_About">About</system:String>
+    <system:String x:Key="Group_Appearance">Appearance</system:String>
+    <system:String x:Key="Group_Behavior">Behavior</system:String>
+    <system:String x:Key="Settings_Restart">Restart App</system:String>
+    
+    <system:String x:Key="Check_AutoStart">Run on Startup</system:String>
+    <system:String x:Key="Check_LockFences">Lock Fences Position</system:String>
+    <system:String x:Key="Check_AutoHide">Auto-Hide (Fade when idle)</system:String>
+    <system:String x:Key="Settings_AutoHideDelay">Hide Delay (sec):</system:String>
+    <system:String x:Key="Settings_AccentColor">Accent Color:</system:String>
+    
+    <system:String x:Key="Exclude_Extensions">Exclude Extensions (comma separated):</system:String>
+    <system:String x:Key="Exclude_FilesFolders">Exclude Files/Folders (one per line):</system:String>
+    <system:String x:Key="Msg_ExclusionRestart">Note: Changes require a re-organize or restart to take effect.</system:String>
+
+    <!-- Fence Categories (12) -->
+    <system:String x:Key="Cat_Shortcuts">Shortcuts</system:String>
+    <system:String x:Key="Cat_Folders">Folders</system:String>
+    <system:String x:Key="Cat_Documents">Documents</system:String>
+    <system:String x:Key="Cat_Spreadsheets">Spreadsheets</system:String>
+    <system:String x:Key="Cat_Presentations">Presentations</system:String>
+    <system:String x:Key="Cat_PDFs">PDFs</system:String>
+    <system:String x:Key="Cat_Images">Images</system:String>
+    <system:String x:Key="Cat_Videos">Videos</system:String>
+    <system:String x:Key="Cat_Audio">Audio</system:String>
+    <system:String x:Key="Cat_Archives">Archives</system:String>
+    <system:String x:Key="Cat_Installers">Installers</system:String>
+    <system:String x:Key="Cat_Code">Code &amp; Text</system:String>
+    <system:String x:Key="Cat_Other">Other Files</system:String>
+
+    <!-- Fence Actions -->
+    <system:String x:Key="Fence_Collapse">Collapse</system:String>
+    <system:String x:Key="Fence_Expand">Expand</system:String>
+    <system:String x:Key="Fence_Remove">Delete Fence</system:String>
+    <system:String x:Key="Fence_Rename">Rename</system:String>
+    <system:String x:Key="Fence_Lock">Lock Position</system:String>
+    <system:String x:Key="Fence_Unlock">Unlock Position</system:String>
+    <system:String x:Key="Fence_OpenFolder">Open Containing Folder</system:String>
+    <system:String x:Key="Fence_ViewList">List View</system:String>
+    <system:String x:Key="Fence_ViewGrid">Grid View</system:String>
+    <system:String x:Key="Fence_New">New Fence</system:String>
+    <system:String x:Key="Fence_Opacity">Opacity</system:String>
+    <system:String x:Key="Fence_Sort">Sort</system:String>
+    <system:String x:Key="Sort_ByName">By Name</system:String>
+    <system:String x:Key="Sort_ByType">By Type</system:String>
+    <system:String x:Key="Sort_ByDate">By Date Modified</system:String>
+    <system:String x:Key="Group_ByType">By Type</system:String>
+    <system:String x:Key="Group_ByDate">By Date</system:String>
+    <system:String x:Key="Group_None">None</system:String>
+    <system:String x:Key="Fence_Classify">Classify</system:String>
+    <system:String x:Key="Menu_ToggleFences">Show/Hide Fences</system:String>
+    <system:String x:Key="Menu_View">View</system:String>
+    <system:String x:Key="Menu_Restart">Restart</system:String>
+    <system:String x:Key="Menu_Exit">Exit</system:String>
+
+    <!-- Context menu -->
+    <system:String x:Key="Ctx_Open">Open</system:String>
+    <system:String x:Key="Ctx_Copy">Copy</system:String>
+    <system:String x:Key="Ctx_Cut">Cut</system:String>
+    <system:String x:Key="Ctx_Delete">Delete</system:String>
+    <system:String x:Key="Ctx_Rename">Rename</system:String>
+    <system:String x:Key="Ctx_Properties">Properties</system:String>
+    <system:String x:Key="Ctx_ConfirmDelete">Delete this file? It will be sent to the Recycle Bin.</system:String>
+
+    <!-- Recycle Bin -->
+    <system:String x:Key="Recycle_Bin">Recycle Bin</system:String>
+    <system:String x:Key="Recycle_Empty">Empty Recycle Bin</system:String>
+    <system:String x:Key="Recycle_ConfirmEmpty">Empty the Recycle Bin? All files will be permanently deleted.</system:String>
+
+    <!-- Dialog -->
+    <system:String x:Key="Dlg_SelectFolder">Select Folder</system:String>
+    <system:String x:Key="Dlg_FenceName">Fence Name</system:String>
+    <system:String x:Key="Dlg_NewFenceTitle">New Fence</system:String>
+    <system:String x:Key="Dlg_RenameTitle">Rename Fence</system:String>
+    <system:String x:Key="Dlg_InputName">Enter name:</system:String>
+    <system:String x:Key="Dlg_OK">OK</system:String>
+    <system:String x:Key="Dlg_Cancel">Cancel</system:String>
+    <system:String x:Key="Dlg_ConfirmDelete">Are you sure you want to delete this fence?</system:String>
+
+    <!-- Status -->
+    <system:String x:Key="Status_Organized">Desktop organized ✓</system:String>
+    <system:String x:Key="Status_NoFiles">No files to organize on desktop</system:String>
+
+</ResourceDictionary>

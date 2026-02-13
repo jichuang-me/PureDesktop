@@ -1,0 +1,28 @@
+# .gitignore for .NET/WPF PureDesktop
+
+# Build results
+/bin/
+/obj/
+[Ee]xtern/
+
+# Visual Studio
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+# IDE specialized directories
+.idea/
+.vscode/
+
+# Build logs and temp files
+*.log
+build_error.txt
+build_log.txt
+
+# Packages
+/packages/
+*.nupkg
+
+# Published output
+/publish/
