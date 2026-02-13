@@ -82,8 +82,12 @@
                 
                 <Separator />
                 
-                <MenuItem Header="{DynamicResource Tray_Manual}" Click="OnManualClick" />
-                <MenuItem Header="{DynamicResource Tray_About}" Click="OnAboutClick" />
+                <MenuItem Header="{DynamicResource Tray_Manual}">
+                    <MenuItem Header="{DynamicResource Manual_Content}" IsEnabled="False" Foreground="{DynamicResource TextSecondary}" />
+                </MenuItem>
+                <MenuItem Header="{DynamicResource Tray_About}">
+                    <MenuItem Header="{DynamicResource About_Content}" IsEnabled="False" Foreground="{DynamicResource TextSecondary}" />
+                </MenuItem>
                 <MenuItem Header="{DynamicResource Menu_Restart}" Click="OnRestartClick" />
                 <MenuItem Header="{DynamicResource Menu_Exit}" Click="OnExitClick" />
             </ContextMenu>
@@ -91,8 +95,7 @@
 
         <!-- ─── Fences Container ─── -->
         <ItemsControl x:Name="FenceHost"
-                      ItemsSource="{Binding Fences}"
-                      Opacity="{Binding FenceOpacity}">
+                      ItemsSource="{Binding Fences}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas />

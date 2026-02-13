@@ -194,12 +194,12 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <!-- Main Container with rounded corners and semi-transparent background -->
+    <!-- Main Container with drop shadow -->
     <Border x:Name="FenceBorder"
             CornerRadius="{DynamicResource FenceCornerRadius}"
-            Background="{DynamicResource FenceBackground}"
-            BorderBrush="{DynamicResource FenceBorder}"
-            BorderThickness="0.6"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            BorderThickness="0"
             ClipToBounds="True"
             SnapsToDevicePixels="True">
 
@@ -207,21 +207,36 @@
             <DropShadowEffect ShadowDepth="1" BlurRadius="8" Opacity="0.12" Color="Black" />
         </Border.Effect>
 
-        <Grid Background="Transparent">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="32" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="20" />
-            </Grid.RowDefinitions>
+        <Grid>
+            <!-- 1. The Background Shell (Adjustable Opacity) -->
+            <Border x:Name="VisualShell"
+                    CornerRadius="{DynamicResource FenceCornerRadius}"
+                    Background="{DynamicResource FenceBackground}"
+                    BorderBrush="{DynamicResource FenceBorder}"
+                    BorderThickness="0.6"
+                    Opacity="{Binding DataContext.FenceOpacity, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+            <!-- 2. The Interactive Content Layer (Always Opaque) -->
+            <Grid Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="32" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
 
             <!-- ─── Title Bar (visible on hover) ─── -->
             <Border x:Name="TitleBar" Grid.Row="0"
-                    Background="{DynamicResource FenceTitleBar}"
+                    Background="Transparent"
                     Opacity="0"
                     MouseLeftButtonDown="OnTitleBarMouseDown"
                     Cursor="SizeAll">
-
-                <Grid Margin="8,0">
+                <Grid>
+                    <!-- Hover background layer -->
+                    <Border Background="{DynamicResource FenceTitleBar}" 
+                            CornerRadius="8,8,0,0"
+                            Opacity="0.85" />
+                    
+                    <Grid Margin="8,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -546,7 +561,7 @@
                 <Thumb.Template>
                     <ControlTemplate><Border Background="Transparent" /></ControlTemplate>
                 </Thumb.Template>
-            </Thumb>
         </Grid>
-    </Border>
+    </Grid>
+</Border>
 </UserControl>

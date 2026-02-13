@@ -214,9 +214,18 @@ public partial class App : Application
 
         menu.Items.Add(new WinForms.ToolStripSeparator());
 
-        // 4. About
+        // 4. Manual (Hover style)
+        var manualItem = new WinForms.ToolStripMenuItem(Res("Tray_Manual"));
+        var manualContent = new WinForms.ToolStripMenuItem(Res("Manual_Content"));
+        manualContent.Enabled = false;
+        manualItem.DropDownItems.Add(manualContent);
+        menu.Items.Add(manualItem);
+
+        // 5. About (Hover style)
         var aboutItem = new WinForms.ToolStripMenuItem(Res("Tray_About"));
-        aboutItem.Click += (s, e) => ShowAbout();
+        var aboutContent = new WinForms.ToolStripMenuItem(Res("About_Content"));
+        aboutContent.Enabled = false;
+        aboutItem.DropDownItems.Add(aboutContent);
         menu.Items.Add(aboutItem);
 
         _trayIcon.ContextMenuStrip = menu;
@@ -325,11 +334,7 @@ public partial class App : Application
         win.ShowDialog();
     }
 
-    private void ShowAbout()
-    {
-        string aboutMsg = "PureDesktop v1.0.0\n专业版\n\n一款现代化、高性能的桌面整理工具。\n版权所有 © 2026 PureDesktop 团队。";
-        MessageBox.Show(aboutMsg, "关于 PureDesktop", MessageBoxButton.OK, MessageBoxImage.Information);
-    }
+
 
     public void SwitchTheme(string mode)
     {

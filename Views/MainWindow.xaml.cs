@@ -640,24 +640,7 @@ public partial class MainWindow : Window
         win.ShowDialog();
     }
 
-    private void OnManualClick(object sender, RoutedEventArgs e)
-    {
-        string manual = Application.Current.TryFindResource("Tray_Manual") as string ?? "Manual";
-        string manualMsg = "PureDesktop 使用指南\n" +
-                           "1. 整理桌面：右键点击空白处 -> 栅格 -> 自动整理\n" +
-                           "2. 创建栅格：右键点击空白处 -> 栅格 -> 添加拖拽栅格\n" +
-                           "3. 外观设计：右键点击空白处 -> 个性化 -> 悬停滑动调节透明度/色彩\n" +
-                           "4. 系统设置：右键点击空白处 -> 系统设置 -> 托盘图标开关\n" +
-                           "5. 退出程序：右键点击空白处 -> 退出";
-        MessageBox.Show(manualMsg, manual, MessageBoxButton.OK, MessageBoxImage.Information);
-    }
 
-    private void OnAboutClick(object sender, RoutedEventArgs e)
-    {
-        string copyright = Application.Current.TryFindResource("Copyright") as string ?? "Copyright © 2026 jichuang";
-        string aboutMsg = $"PureDesktop v1.2.0\nProfessional Edition\n\nA modern, high-performance desktop organizer.\n{copyright}";
-        MessageBox.Show(aboutMsg, "About PureDesktop", MessageBoxButton.OK, MessageBoxImage.Information);
-    }
 
     private void OnGlobalOpacitySliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
