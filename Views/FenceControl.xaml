@@ -440,7 +440,8 @@
                         </Button.Template>
                     </Button>
                 </Grid>
-            </Border>
+            </Grid>
+        </Border>
 
             <!-- ─── Content Area ─── -->
             <!-- Grid View -->
