@@ -8,7 +8,7 @@
 
 ## English Description
 
-PureDesktop v1.2.0 (Professional Edition) is a high-performance Windows desktop organizer. It provides a "Pure" experience by hiding default system icons and replacing them with organized, acrylic-styled fences.
+PureDesktop v1.0.0 (Professional Edition) is a high-performance Windows desktop organizer. It provides a "Pure" experience by hiding default system icons and replacing them with organized, acrylic-styled fences.
 
 ### 🌟 Key Features
 
@@ -57,7 +57,7 @@ PureDesktop recognizes over 80+ file extensions across 10 categories:
 
 ## 简体中文说明
 
-PureDesktop v1.2.0 专业版是一款高性能 Windows 桌面整理工具。它通过隐藏系统默认图标并代之以高度自定义的“亚克力格子”，为您提供真正的纯净桌面体验。
+PureDesktop v1.0.0 专业版是一款高性能 Windows 桌面整理工具。它通过隐藏系统默认图标并代之以高度自定义的“亚克力格子”，为您提供真正的纯净桌面体验。
 
 ### 🌟 核心功能
 

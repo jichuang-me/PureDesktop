@@ -82,12 +82,8 @@
                 
                 <Separator />
                 
-                <MenuItem Header="{DynamicResource Tray_Manual}">
-                    <MenuItem Header="{DynamicResource Manual_Content}" IsEnabled="False" Foreground="{DynamicResource TextSecondary}" />
-                </MenuItem>
-                <MenuItem Header="{DynamicResource Tray_About}">
-                    <MenuItem Header="{DynamicResource About_Content}" IsEnabled="False" Foreground="{DynamicResource TextSecondary}" />
-                </MenuItem>
+                <MenuItem Header="{DynamicResource Tray_Manual}" ToolTip="{DynamicResource Manual_Content}" />
+                <MenuItem Header="{DynamicResource Tray_About}" ToolTip="{DynamicResource About_Content}" />
                 <MenuItem Header="{DynamicResource Menu_Restart}" Click="OnRestartClick" />
                 <MenuItem Header="{DynamicResource Menu_Exit}" Click="OnExitClick" />
             </ContextMenu>

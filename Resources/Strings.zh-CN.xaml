@@ -119,6 +119,7 @@
     <system:String x:Key="Status_Organized">桌面已整理完毕 ✓</system:String>
     <system:String x:Key="Status_NoFiles">桌面上没有可整理的文件</system:String>
 
+
     <!-- Hover Info -->
     <system:String x:Key="Manual_Content">拖拽文件到格子中即可整理。支持跨屏移动与吸附。&#x0a;映射格子会自动同步文件夹内的文件。&#x0a;右键格子标题可进行快捷排序与分类。</system:String>
     <system:String x:Key="About_Content">PureDesktop v1.0.0 (专业版)&#x0a;现代化、高性能、轻量级的桌面整理工具。&#x0a;版权所有 © 2026 PureDesktop 团队。</system:String>

@@ -1095,6 +1095,8 @@ public partial class FenceControl : System.Windows.Controls.UserControl
                 }
             }
         }
+    }
+
     private void OnFenceBoxMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         if (sender is System.Windows.Controls.ListBox lb)

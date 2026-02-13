@@ -6,9 +6,7 @@
              MouseEnter="OnMouseEnter" MouseLeave="OnMouseLeave"
              AllowDrop="True" Drop="OnDrop" DragOver="OnDragOver">
 
-    <!-- The line 'private const double SnapThreshold = 5;' is C# code and cannot be placed directly in a XAML file.
-         It should be placed in the code-behind file (FenceControl.xaml.cs).
-         Therefore, this change cannot be applied to the XAML document as requested while maintaining syntactic correctness. -->
+
     <UserControl.Resources>
         <!-- Narrow scrollbar style (4px, 6px on hover) -->
         <Style x:Key="NarrowScrollBar" TargetType="ScrollBar">
