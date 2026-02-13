@@ -45,7 +45,6 @@ PureDesktop recognizes over 80+ file extensions across 10 categories:
 
 | Shortcut | Action |
 | :--- | :--- |
-| **F2** | Rename selected item |
 | **Alt + Enter** | Open file properties |
 | **Delete** | Move to Recycle Bin |
 | **Ctrl + C / X** | Copy / Cut |
