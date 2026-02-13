@@ -134,7 +134,7 @@
                        HorizontalAlignment="Center"
                        RenderOptions.BitmapScalingMode="HighQuality" />
                 <TextBlock x:Name="RecycleBinLabel"
-                           Text="回收站 (v1.1)"
+                           Text="回收站 (v1.0.0)"
                            Foreground="White"
                            FontSize="11"
                            TextAlignment="Center"

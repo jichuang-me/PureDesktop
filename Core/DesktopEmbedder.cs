@@ -64,16 +64,18 @@ public static class DesktopEmbedder
 
                 SetParent(hwnd, workerw);
                 
-                // Calculate full virtual screen bounds
-                double vWidth = SystemParameters.VirtualScreenWidth;
-                double vHeight = SystemParameters.VirtualScreenHeight;
+                // Calculate full virtual screen bounds in pixels
+                int vLeft = Helpers.Win32Api.GetSystemMetrics(76); // SM_XVIRTUALSCREEN
+                int vTop = Helpers.Win32Api.GetSystemMetrics(77); // SM_YVIRTUALSCREEN
+                int vWidth = Helpers.Win32Api.GetSystemMetrics(78); // SM_CXVIRTUALSCREEN
+                int vHeight = Helpers.Win32Api.GetSystemMetrics(79); // SM_CYVIRTUALSCREEN
 
-                // Important: In a WorkerW, 0,0 is the top-left of the virtual screen area.
-                // We map 0,0 to the parent's origin.
-                // We also ensure it's at the TOP of the Z-order within the WorkerW to be above the wallpaper.
+                // Important: Coordinates after SetParent are relative to the parent's client area.
+                // Since Progman/WorkerW already spans the entire virtual screen,
+                // (0,0) relative to the parent is exactly the top-left of the virtual desktop.
                 Helpers.Win32Api.SetWindowPos(hwnd, Helpers.Win32Api.HWND_TOP, 
-                    0, 0, (int)vWidth, (int)vHeight, 
-                    Helpers.Win32Api.SWP_SHOWWINDOW);
+                    0, 0, vWidth, vHeight, 
+                    Helpers.Win32Api.SWP_SHOWWINDOW | Helpers.Win32Api.SWP_NOACTIVATE | Helpers.Win32Api.SWP_NOOWNERZORDER);
                 
                 return true;
             }
@@ -95,48 +97,43 @@ public static class DesktopEmbedder
 
     private static IntPtr GetWorkerW()
     {
-        // 1. Spawn a WorkerW behind the desktop icons if one doesn't exist
         IntPtr progman = FindWindow("Progman", null);
         IntPtr result = IntPtr.Zero;
         
-        // Send 0x052C to Progman. This message instructs the OS to spawn a WorkerW behind the desktop icons.
+        // Spawn the WorkerW/Wallpaper layer split
         SendMessageTimeout(progman, WM_SPAWN_WORKER, IntPtr.Zero, IntPtr.Zero, 0, 1000, out result);
 
         IntPtr workerw = IntPtr.Zero;
 
-        // 2. Find the WorkerW that is the BEHIND the desktop icons (SHELLDLL_DefView).
+        // 1. Find the WorkerW that is the container for icons.
         EnumWindows((hwnd, lParam) =>
         {
             IntPtr shell = FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null);
             if (shell != IntPtr.Zero)
             {
-                // Found the WorkerW that holds the icons.
-                // The WorkerW BEHIND (sibling after) this one is the wallpaper container we want.
-                workerw = FindWindowEx(IntPtr.Zero, hwnd, "WorkerW", null);
+                // Found the top-level window holding icons.
+                // In some systems, this is a WorkerW. In others, it's Progman.
+                workerw = hwnd;
             }
             return true;
         }, IntPtr.Zero);
 
-        // 3. Fallback: If the above failed (can happen on some versions/states), 
-        // try to find ANY WorkerW that doesn't have SHELLDLL_DefView.
-        if (workerw == IntPtr.Zero)
+        // 2. If we found an icon container, we want to be parented to its parent (Progman or Desktop)
+        // so we are a sibling behind it.
+        if (workerw != IntPtr.Zero)
         {
-            EnumWindows((hwnd, lParam) =>
-            {
-                if (GetWindowClassName(hwnd) == "WorkerW")
-                {
-                    IntPtr shell = FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null);
-                    if (shell == IntPtr.Zero)
-                    {
-                        workerw = hwnd;
-                        return false; // Found one!
-                    }
-                }
-                return true;
-            }, IntPtr.Zero);
+            // On Windows 10/11, if WorkerW was spawned, it's usually at the bottom of Z-order.
+            // Returning Progman is the most reliable way to cover all screens.
+            return progman;
         }
 
-        return workerw;
+        // Special check for systems where SHELLDLL_DefView is directly under Progman
+        if (FindWindowEx(progman, IntPtr.Zero, "SHELLDLL_DefView", null) != IntPtr.Zero)
+        {
+            return progman;
+        }
+
+        return progman;
     }
 
     private static string GetWindowClassName(IntPtr hwnd)

@@ -97,9 +97,9 @@ namespace PureDesktop.Core
             IntPtr contextMenuPtr = IntPtr.Zero;
             IntPtr hMenu = IntPtr.Zero;
 
-            IShellFolder desktopFolder = null;
-            IShellFolder parentFolder = null;
-            IContextMenu contextMenu = null;
+            IShellFolder? desktopFolder = null;
+            IShellFolder? parentFolder = null;
+            IContextMenu? contextMenu = null;
 
             try
             {
@@ -110,8 +110,8 @@ namespace PureDesktop.Core
                 uint pchEaten = 0;
                 uint pdwAttributes = 0;
                 // We need the parent folder and the child item ID
-                string folderPath = System.IO.Path.GetDirectoryName(filePath);
-                string fileName = System.IO.Path.GetFileName(filePath);
+                string? folderPath = System.IO.Path.GetDirectoryName(filePath);
+                string? fileName = System.IO.Path.GetFileName(filePath);
 
                 if (string.IsNullOrEmpty(folderPath) || string.IsNullOrEmpty(fileName)) return;
 

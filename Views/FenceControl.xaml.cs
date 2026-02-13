@@ -896,14 +896,15 @@ public partial class FenceControl : System.Windows.Controls.UserControl
                     try
                     {
                         var files = System.Windows.Clipboard.GetFileDropList();
-                        string targetDir = vm.Model.MappedFolderPath;
+                        string? targetDir = vm.Model.MappedFolderPath;
                         if (string.IsNullOrEmpty(targetDir) || !System.IO.Directory.Exists(targetDir))
                         {
                             targetDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                         }
 
-                        foreach (string filePath in files)
+                        foreach (string? filePath in files)
                         {
+                            if (filePath == null) continue;
                             if (System.IO.File.Exists(filePath))
                             {
                                 string fileName = System.IO.Path.GetFileName(filePath);
@@ -1026,34 +1027,33 @@ public partial class FenceControl : System.Windows.Controls.UserControl
 
     // ─── Smart Snapping ──────────────────────────────────────────
 
-    private const double SnapThreshold = 10;
+    private const double SnapThreshold = 5;
 
     private void ApplySnapping(ref double x, ref double y, ref double w, ref double h, bool isResizing = false)
     {
-        // Use local coordinates (0 to VirtualScreenWidth/Height)
-        // because MainWindow is already positioned/resized to cover the entire virtual desktop.
-        Rect workArea = new Rect(0, 0, SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
+        var mainWin = Application.Current.MainWindow as MainWindow;
+        if (mainWin == null) return;
+
+        double screenW = mainWin.ActualWidth;
+        double screenH = mainWin.ActualHeight;
 
         // 1. Snap to screen edges
-        // Horizontal
-        if (Math.Abs(x - workArea.Left) < SnapThreshold) x = workArea.Left;
-        if (Math.Abs((x + w) - workArea.Right) < SnapThreshold)
+        if (Math.Abs(x) < SnapThreshold) x = 0;
+        if (Math.Abs((x + w) - screenW) < SnapThreshold)
         {
-            if (isResizing) w = workArea.Right - x;
-            else x = workArea.Right - w;
+            if (isResizing) w = screenW - x;
+            else x = screenW - w;
         }
 
-        // Vertical
-        if (Math.Abs(y - workArea.Top) < SnapThreshold) y = workArea.Top;
-        if (Math.Abs((y + h) - workArea.Bottom) < SnapThreshold)
+        if (Math.Abs(y) < SnapThreshold) y = 0;
+        if (Math.Abs((y + h) - screenH) < SnapThreshold)
         {
-            if (isResizing) h = workArea.Bottom - y;
-            else y = workArea.Bottom - h;
+            if (isResizing) h = screenH - y;
+            else y = screenH - h;
         }
 
         // 2. Snap to other fences
-        var mainWin = Window.GetWindow(this) as MainWindow;
-        if (mainWin?.DataContext is MainViewModel mainVm)
+        if (mainWin.DataContext is MainViewModel mainVm)
         {
             foreach (var other in mainVm.Fences)
             {
@@ -1094,6 +1094,12 @@ public partial class FenceControl : System.Windows.Controls.UserControl
                     else y = (other.Y + other.Height) - h;
                 }
             }
+        }
+    private void OnFenceBoxMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (sender is System.Windows.Controls.ListBox lb)
+        {
+            lb.Focus();
         }
     }
 }

@@ -47,12 +47,17 @@ public partial class MainWindow : Window
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        // Cover entire virtual screen for multi-monitor support
-        Left = SystemParameters.VirtualScreenLeft;
-        Top = SystemParameters.VirtualScreenTop;
-        Width = SystemParameters.VirtualScreenWidth;
-        Height = SystemParameters.VirtualScreenHeight;
+        // 1. Get exact pixel coordinates for virtual screen to handle multi-monitor DPI differences
+        // SM_XVIRTUALSCREEN = 76, SM_YVIRTUALSCREEN = 77, SM_CXVIRTUALSCREEN = 78, SM_CYVIRTUALSCREEN = 79
+        int left = Win32Api.GetSystemMetrics(76);
+        int top = Win32Api.GetSystemMetrics(77);
+        int width = Win32Api.GetSystemMetrics(78);
+        int height = Win32Api.GetSystemMetrics(79);
 
+        // 2. Apply bounds to window using Win32 directly to bypass WPF's unit scaling 
+        // which can be unreliable when crossing different DPI monitors.
+        var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+        Win32Api.SetWindowPos(hwnd, IntPtr.Zero, left, top, width, height, Win32Api.SWP_NOZORDER | Win32Api.SWP_NOACTIVATE);
 
         UpdateRecycleBinIcon();
         // Ensure taskbar hiding

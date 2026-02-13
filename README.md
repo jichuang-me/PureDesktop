@@ -1,4 +1,4 @@
-# PureDesktop v1.2.0
+# PureDesktop v1.0.0
 
 [English](#english) | [简体中文](#简体中文)
 

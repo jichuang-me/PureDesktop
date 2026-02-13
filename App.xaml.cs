@@ -327,8 +327,8 @@ public partial class App : Application
 
     private void ShowAbout()
     {
-        string aboutMsg = "PureDesktop v1.2.0\nProfessional Edition\n\nA modern, high-performance desktop organizer.\nCopyright © 2026 PureDesktop Team.";
-        MessageBox.Show(aboutMsg, "About PureDesktop", MessageBoxButton.OK, MessageBoxImage.Information);
+        string aboutMsg = "PureDesktop v1.0.0\n专业版\n\n一款现代化、高性能的桌面整理工具。\n版权所有 © 2026 PureDesktop 团队。";
+        MessageBox.Show(aboutMsg, "关于 PureDesktop", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     public void SwitchTheme(string mode)
