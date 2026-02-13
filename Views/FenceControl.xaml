@@ -562,6 +562,7 @@
                 <Thumb.Template>
                     <ControlTemplate><Border Background="Transparent" /></ControlTemplate>
                 </Thumb.Template>
+            </Thumb>
         </Grid>
     </Grid>
 </Border>
