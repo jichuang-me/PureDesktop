@@ -1,4 +1,4 @@
-# PureDesktop
+# PureDesktop v1.2.0
 
 [English](#english) | [简体中文](#简体中文)
 
@@ -8,47 +8,49 @@
 
 ## English Description
 
-PureDesktop is a lightweight, modern Windows desktop organizer designed to keep your workspace clean and productive. It automatically classifies your files into themed "fences" and stays invisible until you need it.
+PureDesktop v1.2.0 (Professional Edition) is a high-performance Windows desktop organizer. It provides a "Pure" experience by hiding default system icons and replacing them with organized, acrylic-styled fences.
 
 ### 🌟 Key Features
 
-- **Smart Classification**: 1-click organization of desktop files into categories (Documents, Pictures, Programs, etc.).
-- **Mapped Fences**: Map any folder on your PC into a desktop fence with real-time synchronization.
-- **Shell Integration**: Right-click any file in File Explorer to send it to a specific fence.
-- **Exclusion Rules**: Define files, extensions, or folders to be ignored by the organizer.
-- **Smart Appearance**:
-  - **Acrylic Blur**: Premium Windows 11 acrylic effect for fences.
-  - **Theme Support**: Follows system Light/Dark mode or manual override.
-  - **Dynamic Opacity**: Adjust transparency for a custom look.
-- **Productivity Tools**:
-  - **Auto-Hide**: Fences fade out when idle to reveal your wallpaper.
-  - **Sorting & Grouping**: Sort items by name, type, or date; group by type or date.
-  - **View Modes**: Switch between Grid and List views.
-- **Hidden Power**: Fully hidden from taskbar and Alt+Tab; accessible via tray or desktop double-click.
+- **Smart Auto-Organize**: Automatically classifies products into 10 categories. It is "smart" as it preserves files already in fences and only moves new desktop items.
+- **Embedded Desktop Experience**: Automatically hides default Windows desktop icons (`SysListView32`) to provide a clean workspace.
+- **Native Shell Integration**: Right-click any file *within* a fence to access the native Windows context menu (Open, Copy, Cut, etc.).
+- **Built-in Recycle Bin**: Dedicated recycle bin integration with full empty/restore support directly on your desk.
+- **Mapped Fences**: Sync any folder on your PC to the desktop with real-time file system watching.
+- **Visual Excellence**:
+  - **Acrylic Effect**: Real-time Windows 11 style acrylic blur.
+  - **Accent Colors**: Custom hex input or system-aware coloring.
+  - **Dark/Light Mode**: Full support for system themes and manual override.
+- **Productivity & Behavior**:
+  - **Auto-Hide**: Fences fade out after a configurable delay (default: idle).
+  - **Sorting/Grouping**: Support for Name, Type, and Date modified.
+  - **Double-Click**: Hide/Show all fences by double-clicking empty desktop space.
+
+### 📁 Classification Categories
+
+PureDesktop recognizes over 80+ file extensions across 10 categories:
+
+- **Shortcuts**: `.lnk`, `.url`
+- **Folders**: Directories
+- **Documents**: Office files, `.pdf`, `.txt`, `.md`, etc.
+- **Images**: `.jpg`, `.png`, `.gif`, `.svg`, `.psd`, `.ai`, etc.
+- **Videos**: `.mp4`, `.avi`, `.mkv`, `.rmvb`, etc.
+- **Audio**: `.mp3`, `.wav`, `.flac`, `.m4a`, etc.
+- **Archives**: `.zip`, `.rar`, `.7z`, `.iso`, etc.
+- **Installers**: `.exe`, `.msi`, `.msix`, `.appx`, etc.
+- **Code**: `.cs`, `.py`, `.js`, `.json`, `.xml`, `.html`, `.cpp`, `.log`, `.bat`, etc.
+- **Other**: Everything else.
 
 ### ⌨️ Keyboard Shortcuts
 
 | Shortcut | Action |
 | :--- | :--- |
 | **F2** | Rename selected item |
-| **Alt + Enter** | Open file properties dialog |
-| **Delete** | Move selected item(s) to Recycle Bin |
-| **Ctrl + C / X** | Copy / Cut selected item(s) |
-| **Ctrl + V** | Paste files into a mapped fence (or to desktop) |
-| **Esc** | Close active dialog or collapse fence |
-
-### 🖱️ Tray & Mouse Operations
-
-- **Tray Left Click**: Toggle fence visibility.
-- **Tray Right Click**: Access Settings, Add Mapped Fence, Theme, Language, and Exclusions.
-- **Desktop Double-Click**: Show/Hide all fences.
-- **Fence Title-Click**: Collapse/Expand the fence.
-
-### 🛠️ Build & Run
-
-- Requires **.NET 8 SDK**.
-- Run `dotnet build` in the `PureDesktop` directory.
-- Launch `PureDesktop.exe` from `bin/Debug/net8.0-windows/`.
+| **Alt + Enter** | Open file properties |
+| **Delete** | Move to Recycle Bin |
+| **Ctrl + C / X** | Copy / Cut |
+| **Ctrl + V** | Paste |
+| **Esc** | Close dialogs / Collapse fence |
 
 ---
 
@@ -56,47 +58,49 @@ PureDesktop is a lightweight, modern Windows desktop organizer designed to keep 
 
 ## 简体中文说明
 
-PureDesktop 是一款轻量级、现代化的 Windows 桌面整理工具，旨在让您的工作空间保持整洁高效。它能自动将文件分类到主题“分栏（Fences）”中，并在不需要时保持隐身。
+PureDesktop v1.2.0 专业版是一款高性能 Windows 桌面整理工具。它通过隐藏系统默认图标并代之以高度自定义的“亚克力格子”，为您提供真正的纯净桌面体验。
 
 ### 🌟 核心功能
 
-- **一键整理**：智能自动分类桌面文件（文档、图片、程序、压缩包等）。
-- **文件夹映射**：将电脑任意文件夹映射为桌面格子，支持实时同步。
-- **右键菜单集成**：在资源管理器右键点击文件，即可快速发送至指定格子。
-- **排除规则**：自定义排除特定后缀、文件名或文件夹，防止误整理。
-- **精美视觉**：
-  - **亚克力效果**：采用 Win11 风格的亚克力背景，质感高级。
-  - **主题适配**：完美支持系统深/浅色模式切换。
-  - **透明度调节**：自由调整格子透明度。
-- **高效管理**：
-  - **自动隐藏**：闲置时自动淡出，还原精美壁纸。
-  - **排序与分组**：支持按名称、类型、修改日期排序或分组。
-  - **视图切换**：支持图标网格与详细列表两种视图模式。
-- **极简体验**：不占任务栏，不占 Alt+Tab；通过托盘图标或桌面双击快速唤醒。
+- **智能一键整理**：支持 10 大类自动分类。具备“增量整理”能力，仅处理桌面新文件，不破坏已有格子的布局。
+- **纯净桌面模式**：自动隐藏 Windows 默认桌面图标（`SysListView32`），彻底消除杂乱。
+- **原生右键菜单**：在格子内右键点击文件，可直接唤起原生 Windows 右键菜单（打开、复制、剪切、属性等）。
+- **内置回收站**：深度集成的回收站格子，支持在桌面上直接清空或管理删除文件。
+- **文件夹映射**：将电脑任意文件夹映射到桌面，支持实时文件系统监控与同步。
+- **极简视觉设计**：
+  - **亚克力特效**：深度的 Win11 亚克力模糊效果，质感高级。
+  - **自定义主题色**：支持十六进制代码输入或跟随系统主题色。
+  - **深浅色适配**：完美支持系统深/浅色模式切换。
+- **高效交互行为**：
+  - **自动隐藏**：闲置指定时间（可调）后格子自动淡出。
+  - **多样化视图**：支持按名称、类型、日期排序，及网格/列表视图切换。
+  - **桌面双击**：双击桌面空白处快速显示或隐藏所有格子。
+
+### 📁 分类逻辑
+
+PureDesktop 预设了 10 种分类，支持 80 多种常见后缀：
+
+- **快捷方式**：`.lnk`, `.url`
+- **文件夹**：所有目录文件夹
+- **文档**：各类 Office 文档, `.pdf`, `.txt`, `.md` 等
+- **图片**：`.jpg`, `.png`, `.gif`, `.svg`, `.psd`, `.ai` 等
+- **视频**：`.mp4`, `.avi`, `.mkv`, `.rmvb` 等
+- **音频**：`.mp3`, `.wav`, `.flac`, `.m4a` 等
+- **压缩包**：`.zip`, `.rar`, `.7z`, `.iso` 等
+- **安装包**：`.exe`, `.msi`, `.msix`, `.appx` 等
+- **代码/文本**：`.cs`, `.py`, `.js`, `.json`, `.xml`, `.html`, `.log`, `.bat` 等
+- **其他**：未识别的其他文件后缀
 
 ### ⌨️ 快捷键支持
 
 | 快捷键 | 动作 |
 | :--- | :--- |
 | **F2** | 重命名所选项目 |
-| **Alt + Enter** | 打开文件属性对话框 |
-| **Delete** | 将所选项目移至回收站 |
-| **Ctrl + C / X** | 复制 / 剪切项目 |
-| **Ctrl + V** | 粘贴文件到分栏（或桌面） |
-| **Esc** | 关闭对话框或收起格子 |
-
-### 🖱️ 操作指南
-
-- **托盘左键**：快速切换格子显示/隐藏。
-- **托盘右键**：访问设置、添加映射、切换主题语言、管理排除项。
-- **桌面双击**：显示/隐藏所有格子。
-- **标题点击**：折叠或展开格子。
-
-### 🛠️ 编译与运行
-
-- 需要安装 **.NET 8 SDK**。
-- 在 `PureDesktop` 目录下运行 `dotnet build`。
-- 从 `bin/Debug/net8.0-windows/` 目录运行 `PureDesktop.exe`。
+| **Alt + Enter** | 打开文件属性 |
+| **Delete** | 移至回收站 |
+| **Ctrl + C / X** | 复制 / 剪切 |
+| **Ctrl + V** | 粘贴 |
+| **Esc** | 关闭对话框 / 收起格子 |
 
 ---
 © 2026 jichuang. Licensed under the MIT License.
