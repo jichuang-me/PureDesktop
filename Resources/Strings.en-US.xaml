@@ -61,7 +61,8 @@
     <system:String x:Key="Cat_Archives">Archives</system:String>
     <system:String x:Key="Cat_Installers">Installers</system:String>
     <system:String x:Key="Cat_Code">Code &amp; Text</system:String>
-    <system:String x:Key="Cat_Other">Other Files</system:String>
+    <system:String x:Key="Cat_CommonFiles">Common Files</system:String>
+    <system:String x:Key="Cat_Other">Others</system:String>
 
     <!-- Fence Actions -->
     <system:String x:Key="Fence_Collapse">Collapse</system:String>

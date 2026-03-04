@@ -82,8 +82,8 @@
                 
                 <Separator />
                 
-                <MenuItem Header="{DynamicResource Tray_Manual}" ToolTip="{DynamicResource Manual_Content}" />
-                <MenuItem Header="{DynamicResource Tray_About}" ToolTip="{DynamicResource About_Content}" />
+                <MenuItem Header="{DynamicResource Tray_Help}" Click="OnHelpClick"/>
+                <MenuItem Header="{DynamicResource Menu_ResetLayout}" Click="OnResetLayoutClick"/>
                 <MenuItem Header="{DynamicResource Menu_Restart}" Click="OnRestartClick" />
                 <MenuItem Header="{DynamicResource Menu_Exit}" Click="OnExitClick" />
             </ContextMenu>

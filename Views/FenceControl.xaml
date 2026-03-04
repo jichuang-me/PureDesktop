@@ -8,11 +8,12 @@
 
 
     <UserControl.Resources>
-        <!-- Narrow scrollbar style (4px, 6px on hover) -->
+        <!-- Narrow scrollbar style (3px, 5px on hover) -->
         <Style x:Key="NarrowScrollBar" TargetType="ScrollBar">
-            <Setter Property="Width" Value="4" />
-            <Setter Property="MinWidth" Value="4" />
+            <Setter Property="Width" Value="3" />
+            <Setter Property="MinWidth" Value="3" />
             <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Opacity" Value="0.4" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ScrollBar">
@@ -23,15 +24,16 @@
                                         <Thumb.Template>
                                             <ControlTemplate TargetType="Thumb">
                                                 <Border x:Name="ThumbBorder"
-                                                        CornerRadius="2"
+                                                        CornerRadius="1.5"
                                                         Background="{DynamicResource ScrollBarBrush}"
-                                                        Width="4"
-                                                        MinHeight="20"
+                                                        Width="3"
+                                                        MinHeight="24"
                                                         Margin="0,1" />
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="ThumbBorder" Property="Width" Value="6" />
-                                                        <Setter TargetName="ThumbBorder" Property="CornerRadius" Value="3" />
+                                                        <Setter TargetName="ThumbBorder" Property="Width" Value="5" />
+                                                        <Setter TargetName="ThumbBorder" Property="CornerRadius" Value="2.5" />
+                                                        <Setter TargetName="ThumbBorder" Property="Background" Value="{DynamicResource Accent}" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -40,18 +42,59 @@
                                 </Track.Thumb>
                             </Track>
                         </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <Style x:Key="HoverScrollViewer" TargetType="ScrollViewer">
-            <Setter Property="VerticalScrollBarVisibility" Value="Hidden" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
-                    <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
-                </DataTrigger>
-            </Style.Triggers>
+        <Style x:Key="ModernScrollViewer" TargetType="ScrollViewer">
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollViewer">
+                        <Grid>
+                            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" />
+                            <ScrollBar x:Name="PART_VerticalScrollBar"
+                                       HorizontalAlignment="Right"
+                                       Orientation="Vertical"
+                                       Style="{StaticResource NarrowScrollBar}"
+                                       Value="{TemplateBinding VerticalOffset}"
+                                       Maximum="{TemplateBinding ScrollableHeight}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                       Opacity="0" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="PART_VerticalScrollBar"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0.6" Duration="0:0:0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="PART_VerticalScrollBar"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0" Duration="0:0:0.5" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- Grid (icon) view item template -->
@@ -454,6 +497,9 @@
                      Padding="4,2"
                      Background="Transparent"
                      BorderThickness="0">
+                <ListBox.Resources>
+                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource ModernScrollViewer}" />
+                </ListBox.Resources>
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal" />
@@ -490,6 +536,9 @@
                      Padding="4,2"
                      Background="Transparent"
                      BorderThickness="0">
+                <ListBox.Resources>
+                    <Style TargetType="ScrollViewer" BasedOn="{StaticResource ModernScrollViewer}" />
+                </ListBox.Resources>
                 <ListBox.ItemContainerStyle>
                      <Style TargetType="ListBoxItem">
                         <Setter Property="Padding" Value="0"/>

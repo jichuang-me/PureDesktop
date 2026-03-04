@@ -26,8 +26,7 @@
     <system:String x:Key="Tray_AutoHide">自动隐藏</system:String>
     <system:String x:Key="Tray_Exclusions">排除规则</system:String>
     <system:String x:Key="Tray_ShowTrayIcon">显示托盘图标</system:String>
-    <system:String x:Key="Tray_About">关于</system:String>
-    <system:String x:Key="Tray_Manual">使用说明</system:String>
+    <system:String x:Key="Tray_Help">说明</system:String>
     <system:String x:Key="Copyright">Copyright © 2026 jichuang</system:String>
     <system:String x:Key="Tray_Exit">退出</system:String>
     
@@ -64,7 +63,8 @@
     <system:String x:Key="Cat_Archives">压缩包</system:String>
     <system:String x:Key="Cat_Installers">安装包</system:String>
     <system:String x:Key="Cat_Code">代码/文本</system:String>
-    <system:String x:Key="Cat_Other">其他文件</system:String>
+    <system:String x:Key="Cat_CommonFiles">常用文件</system:String>
+    <system:String x:Key="Cat_Other">其他</system:String>
 
     <!-- Fence Actions -->
     <system:String x:Key="Fence_Collapse">折叠</system:String>
@@ -81,7 +81,7 @@
     <system:String x:Key="Fence_Sort">排序</system:String>
     <system:String x:Key="Sort_ByName">按名称</system:String>
     <system:String x:Key="Sort_ByType">按类型</system:String>
-    <system:String x:Key="Sort_ByDate">按修改日期</system:String>
+    <system:String x:Key="Sort_ByDate">按日期</system:String>
     <system:String x:Key="Group_ByType">按类型</system:String>
     <system:String x:Key="Group_ByDate">按日期</system:String>
     <system:String x:Key="Group_None">无</system:String>
@@ -89,6 +89,7 @@
     <system:String x:Key="Menu_ToggleFences">显示/隐藏格子</system:String>
     <system:String x:Key="Menu_View">视图</system:String>
     <system:String x:Key="Menu_Refresh">刷新</system:String>
+    <system:String x:Key="Menu_ResetLayout">重置布局</system:String>
     <system:String x:Key="Menu_Exit">退出</system:String>
 
     <!-- Context menu -->
@@ -121,7 +122,7 @@
 
 
     <!-- Hover Info -->
-    <system:String x:Key="Manual_Content">拖拽文件到格子中即可整理。支持跨屏移动与吸附。&#x0a;映射格子会自动同步文件夹内的文件。&#x0a;右键格子标题可进行快捷排序与分类。</system:String>
-    <system:String x:Key="About_Content">PureDesktop v1.0.0 (专业版)&#x0a;现代化、高性能、轻量级的桌面整理工具。&#x0a;版权所有 © 2026 PureDesktop 团队。</system:String>
+    <system:String x:Key="Manual_Content">1. 拖拽文件到格子中即可整理。支持跨屏移动与吸附。&#x0a;2. 映射格子会自动同步文件夹内的文件。&#x0a;3. 右键格子标题可进行快捷排序与分类。&#x0a;4. 双击桌面空白处可显示/隐藏所有格子。</system:String>
+    <system:String x:Key="About_Content">PureDesktop v1.0.0 (专业版)&#x0a;&#x0a;一款现代化、高性能、轻量级的桌面整理工具。&#x0a;版权所有 © 2026 jichuang 保留所有权利。</system:String>
 
 </ResourceDictionary>

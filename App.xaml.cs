@@ -16,76 +16,53 @@ public partial class App : Application
 
     private System.Threading.Mutex? _mutex;
 
-    private void OnStartup(object sender, StartupEventArgs e)
+    protected override void OnStartup(StartupEventArgs e)
     {
-        const string appName = "PureDesktop_SingleInstance_Mutex";
-        bool createdNew;
-        _mutex = new System.Threading.Mutex(true, appName, out createdNew);
-
-        if (!createdNew)
+        try 
         {
-            // App is already running - Perform silent restart
-            try
-            {
-                var currentProcess = Process.GetCurrentProcess();
-                var existingProcesses = Process.GetProcessesByName(currentProcess.ProcessName);
-                foreach (var p in existingProcesses)
-                {
-                    if (p.Id != currentProcess.Id)
-                    {
-                        p.Kill();
-                        p.WaitForExit(3000);
-                    }
-                }
-            }
-            catch { }
+            // Standard startup (loads MainWindow from StartupUri)
+            base.OnStartup(e);
 
-            // Re-acquire mutex for the new instance
-            _mutex = new System.Threading.Mutex(true, appName, out createdNew);
-        }
+            EnsureAssets();
 
-        // Create hidden owner for taskbar hiding
-        _hiddenOwner = new Window
-        {
-            Width = 0, Height = 0, WindowStyle = WindowStyle.None,
-            ShowInTaskbar = false, AllowsTransparency = true,
-            Background = System.Windows.Media.Brushes.Transparent
-        };
-        _hiddenOwner.Show();
-
-        // Global exception handling
-        this.DispatcherUnhandledException += OnDispatcherUnhandledException;
-        AppDomain.CurrentDomain.UnhandledException += OnCurrentDomainUnhandledException;
-
-        EnsureAssets();
-
-        try
-        {
-            // Load settings to get theme mode
+            // Setup tray
+            SetupTrayIcon();
+            
+            // Load settings and apply saved theme/language/accent
             var fm = new Core.FenceManager();
             fm.Load();
-            _currentThemeMode = fm.Settings.ThemeMode;
-
-            // Apply theme based on mode
-            ThemeHelper.ApplyThemeMode(_currentThemeMode);
-
-            // Monitor for system theme changes
-            ThemeHelper.StartMonitoring(dark => ThemeHelper.ApplyTheme(dark));
-
-            // Apply saved language
-            if (fm.Settings.Language != "zh-CN")
-            {
+            
+            if (!string.IsNullOrEmpty(fm.Settings.Language))
                 SwitchLanguage(fm.Settings.Language);
-            }
+            
+            if (!string.IsNullOrEmpty(fm.Settings.ThemeMode))
+                SwitchTheme(fm.Settings.ThemeMode);
+            
+            if (!string.IsNullOrEmpty(fm.Settings.AccentColor))
+                ApplyAccent(fm.Settings.AccentColor);
 
-            // Create tray icon
-            SetupTrayIcon();
+            // Hidden owner for taskbar logic
+            _hiddenOwner = new Window
+            {
+                Width = 0, Height = 0, WindowStyle = WindowStyle.None,
+                ShowInTaskbar = false, AllowsTransparency = true,
+                Background = System.Windows.Media.Brushes.Transparent
+            };
+            _hiddenOwner.Show();
         }
         catch (Exception ex)
         {
             LogException(ex);
             Shutdown(1);
         }
+    }
+
+    private void DebugLog(string msg)
+    {
+        try { 
+            string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "pure_debug.txt");
+            System.IO.File.AppendAllText(path, $"{DateTime.Now}: {msg}\n"); 
+        } catch {}
     }
 
     private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
@@ -214,19 +191,22 @@ public partial class App : Application
 
         menu.Items.Add(new WinForms.ToolStripSeparator());
 
-        // 4. Manual (Hover style)
-        var manualItem = new WinForms.ToolStripMenuItem(Res("Tray_Manual"));
-        var manualContent = new WinForms.ToolStripMenuItem(Res("Manual_Content"));
-        manualContent.Enabled = false;
-        manualItem.DropDownItems.Add(manualContent);
-        menu.Items.Add(manualItem);
-
-        // 5. About (Hover style)
-        var aboutItem = new WinForms.ToolStripMenuItem(Res("Tray_About"));
-        var aboutContent = new WinForms.ToolStripMenuItem(Res("About_Content"));
-        aboutContent.Enabled = false;
-        aboutItem.DropDownItems.Add(aboutContent);
-        menu.Items.Add(aboutItem);
+        // 4. Help / About
+        var helpItem = new WinForms.ToolStripMenuItem(Res("Tray_Help"));
+        helpItem.Click += (s, e) =>
+        {
+            var win = Application.Current.Windows.OfType<PureDesktop.Views.AboutWindow>().FirstOrDefault();
+            if (win == null)
+            {
+                win = new PureDesktop.Views.AboutWindow();
+                win.Show();
+            }
+            else
+            {
+                win.Activate();
+            }
+        };
+        menu.Items.Add(helpItem);
 
         _trayIcon.ContextMenuStrip = menu;
     }

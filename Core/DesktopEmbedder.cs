@@ -80,9 +80,10 @@ public static class DesktopEmbedder
                 return true;
             }
 
-            // 2. Fallback: Just place at bottom of Z-order
+            // 2. Fallback: Just place at top of Z-order of WorkArea (if embedding fails) 
+            // Better to show on top than hide under wallpaper
             var workArea = SystemParameters.WorkArea;
-            Helpers.Win32Api.SetWindowPos(hwnd, HWND_BOTTOM,
+            Helpers.Win32Api.SetWindowPos(hwnd, Helpers.Win32Api.HWND_TOP,
                 (int)workArea.Left, (int)workArea.Top,
                 (int)workArea.Width, (int)workArea.Height,
                 Helpers.Win32Api.SWP_SHOWWINDOW);
@@ -103,35 +104,25 @@ public static class DesktopEmbedder
         // Spawn the WorkerW/Wallpaper layer split
         SendMessageTimeout(progman, WM_SPAWN_WORKER, IntPtr.Zero, IntPtr.Zero, 0, 1000, out result);
 
-        IntPtr workerw = IntPtr.Zero;
+        IntPtr shellContainer = IntPtr.Zero;
 
-        // 1. Find the WorkerW that is the container for icons.
+        // Try to find the window that contains SHELLDLL_DefView
         EnumWindows((hwnd, lParam) =>
         {
             IntPtr shell = FindWindowEx(hwnd, IntPtr.Zero, "SHELLDLL_DefView", null);
             if (shell != IntPtr.Zero)
             {
-                // Found the top-level window holding icons.
-                // In some systems, this is a WorkerW. In others, it's Progman.
-                workerw = hwnd;
+                shellContainer = hwnd;
             }
             return true;
         }, IntPtr.Zero);
 
-        // 2. If we found an icon container, we want to be parented to its parent (Progman or Desktop)
-        // so we are a sibling behind it.
-        if (workerw != IntPtr.Zero)
-        {
-            // On Windows 10/11, if WorkerW was spawned, it's usually at the bottom of Z-order.
-            // Returning Progman is the most reliable way to cover all screens.
-            return progman;
-        }
-
-        // Special check for systems where SHELLDLL_DefView is directly under Progman
-        if (FindWindowEx(progman, IntPtr.Zero, "SHELLDLL_DefView", null) != IntPtr.Zero)
-        {
-            return progman;
-        }
+        // If shellContainer is found (it might be a WorkerW or Progman), 
+        // parenting to it and setting Z-order to TOP will place us 
+        // behind icons (which are in SHELLDLL_DefView child) but ABOVE the wallpaper.
+        // If we use HWND_BOTTOM, we might get covered by random wallpaper repaints or be too deep.
+        // Since we want to be "The Desktop", being at the top of the container that holds DefView is good.
+        if (shellContainer != IntPtr.Zero) return shellContainer;
 
         return progman;
     }

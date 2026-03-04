@@ -213,8 +213,7 @@ public partial class MainWindow : Window
     {
         _fencesVisible = !_fencesVisible;
         TriggerVisibilityAnimation(_fencesVisible ? 1.0 : 0.0);
-        if (RecycleBinIcon != null)
-            RecycleBinIcon.IsHitTestVisible = _fencesVisible;
+        // RecycleBinIcon always visible
     }
 
     private void OnToggleFencesClick(object sender, RoutedEventArgs e)
@@ -229,7 +228,7 @@ public partial class MainWindow : Window
             EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
         };
         FenceHost.BeginAnimation(UIElement.OpacityProperty, anim);
-        RecycleBinIcon.BeginAnimation(UIElement.OpacityProperty, anim);
+        // RecycleBinIcon.BeginAnimation(UIElement.OpacityProperty, anim); // Keep Recycle Bin Visible
     }
 
     // ─── Auto-Hide Logic ──────────────────────────────────────
@@ -488,11 +487,36 @@ public partial class MainWindow : Window
     private void OnAutoOrganizeClick(object sender, RoutedEventArgs e)
     {
         AutoOrganize();
-        // Force refresh all fences
-        foreach (var fence in _viewModel.Fences)
-        {
-            fence.RefreshItems();
-        }
+        _fenceManager.Save();
+        // ShowToast(Application.Current.TryFindResource("Status_Organized") as string ?? "Organized!");
+    }
+
+    /// <summary>
+    /// Completely resets the layout: clears all fences and re-runs auto-organize from scratch.
+    /// </summary>
+    public void ResetLayout()
+    {
+        string msg = "确定要重置所有格子布局吗？\n这将清除当前所有自定义格子并重新分类桌面文件。";
+        if (MessageBox.Show(msg, "PureDesktop", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            return;
+
+        // Stop mappers
+        foreach (var mapper in _diskMappers) mapper.Dispose();
+        _diskMappers.Clear();
+
+        // Clear everything
+        _fenceManager.Settings.Fences.Clear();
+        _viewModel.Fences.Clear(); // Only works if ObservableCollection, otherwise reload
+        
+        // Re-run full auto-organize which will pick up all desktop files since fences are empty
+        AutoOrganize();
+        
+        // Reload view
+        _viewModel.LoadFromSettings(_fenceManager.Settings);
+        StartDiskMappers();
+
+        // Save
+        _fenceManager.Save();
     }
 
     private void OnAddMappedFenceClick(object sender, RoutedEventArgs e)
@@ -638,6 +662,25 @@ public partial class MainWindow : Window
     {
         var win = new ExclusionsWindow(_fenceManager);
         win.ShowDialog();
+    }
+
+    private void OnResetLayoutClick(object sender, RoutedEventArgs e)
+    {
+        ResetLayout();
+    }
+
+    private void OnHelpClick(object sender, RoutedEventArgs e)
+    {
+        var win = Application.Current.Windows.OfType<AboutWindow>().FirstOrDefault();
+        if (win == null)
+        {
+            win = new AboutWindow();
+            win.Show();
+        }
+        else
+        {
+            win.Activate();
+        }
     }
 
 

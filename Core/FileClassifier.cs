@@ -10,38 +10,15 @@ public static class FileClassifier
 {
     private static readonly Dictionary<string, HashSet<string>> CategoryExtensions = new()
     {
-        ["shortcuts"] = new(StringComparer.OrdinalIgnoreCase) { ".lnk", ".url" },
-        ["documents"] = new(StringComparer.OrdinalIgnoreCase)
+        ["common_files"] = new(StringComparer.OrdinalIgnoreCase)
         {
-            ".doc", ".docx", ".rtf", ".odt", ".wps", ".txt", ".md",
+            // Shortcuts
+            ".lnk", ".url",
+            // Documents
+            ".doc", ".docx", ".rtf", ".odt", ".wps", ".txt", ".md", ".pdf",
             ".xls", ".xlsx", ".csv", ".ods", ".et", ".etx",
             ".ppt", ".pptx", ".odp", ".dps", ".key",
-            ".pdf"
-        },
-        ["images"] = new(StringComparer.OrdinalIgnoreCase)
-        {
-            ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp", ".ico",
-            ".tiff", ".tif", ".raw", ".psd", ".ai", ".eps"
-        },
-        ["videos"] = new(StringComparer.OrdinalIgnoreCase)
-        {
-            ".mp4", ".avi", ".mkv", ".mov", ".wmv", ".flv", ".webm", ".m4v",
-            ".rmvb", ".rm", ".3gp", ".ts"
-        },
-        ["audio"] = new(StringComparer.OrdinalIgnoreCase)
-        {
-            ".mp3", ".wav", ".flac", ".aac", ".ogg", ".wma", ".m4a", ".ape"
-        },
-        ["archives"] = new(StringComparer.OrdinalIgnoreCase)
-        {
-            ".zip", ".rar", ".7z", ".tar", ".gz", ".bz2", ".xz", ".iso"
-        },
-        ["installers"] = new(StringComparer.OrdinalIgnoreCase)
-        {
-            ".exe", ".msi", ".msix", ".appx", ".deb", ".dmg"
-        },
-        ["code"] = new(StringComparer.OrdinalIgnoreCase)
-        {
+            // Code & Text
             ".cs", ".java", ".py", ".js", ".ts", ".html", ".css", ".cpp",
             ".c", ".h", ".go", ".rs", ".rb", ".php", ".swift", ".kt",
             ".json", ".xml", ".yaml", ".yml", ".ini", ".log", ".bat",
@@ -83,18 +60,11 @@ public static class FileClassifier
                 allItems.Add((f, false));
         }
 
-        // Classify into buckets
+        // Classify into buckets (Simplified to 3 categories)
         var buckets = new Dictionary<string, List<FenceItem>>
         {
-            ["shortcuts"] = new(),
+            ["common_files"] = new(),
             ["folders"] = new(),
-            ["documents"] = new(),
-            ["images"] = new(),
-            ["videos"] = new(),
-            ["audio"] = new(),
-            ["archives"] = new(),
-            ["installers"] = new(),
-            ["code"] = new(),
             ["other"] = new()
         };
 
@@ -133,6 +103,11 @@ public static class FileClassifier
             {
                 // Check custom rules first
                 string category = GetCategoryWithCustomRules(ext, settings);
+                
+                // Map complex categories to simplified buckets if necessary
+                if (!buckets.ContainsKey(category))
+                    category = "other";
+                    
                 buckets[category].Add(item);
             }
         }
@@ -179,7 +154,11 @@ public static class FileClassifier
         string ext = Path.GetExtension(filePath);
         bool isDir = Directory.Exists(filePath);
         if (isDir) return "folders";
-        return GetCategoryWithCustomRules(ext, settings);
+        
+        string cat = GetCategoryWithCustomRules(ext, settings);
+        if (cat != "common_files" && cat != "folders" && cat != "other")
+            return "other";
+        return cat;
     }
 
     /// <summary>
@@ -207,7 +186,7 @@ public static class FileClassifier
     {
         foreach (var (category, extensions) in CategoryExtensions)
         {
-            if (extensions.Contains(extension))
+            if (extensions.Contains(extension) && category == "common_files")
                 return category;
         }
         return "other";
@@ -218,15 +197,8 @@ public static class FileClassifier
     /// </summary>
     public static string GetCategoryDisplayKey(string category) => category switch
     {
-        "shortcuts" => "Cat_Shortcuts",
+        "common_files" => "Cat_CommonFiles",
         "folders" => "Cat_Folders",
-        "documents" => "Cat_Documents",
-        "images" => "Cat_Images",
-        "videos" => "Cat_Videos",
-        "audio" => "Cat_Audio",
-        "archives" => "Cat_Archives",
-        "installers" => "Cat_Installers",
-        "code" => "Cat_Code",
         "other" => "Cat_Other",
         _ => "Cat_Other"
     };

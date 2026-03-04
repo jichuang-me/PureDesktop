@@ -21,6 +21,10 @@ public partial class FenceControl : System.Windows.Controls.UserControl
     private const double MinFenceHeight = 100;
     private const double CollapsedHeight = 30;
     private double _expandedHeight;
+    
+    // Sort State
+    private string _lastSortKey = "";
+    private bool _isSortAscending = true;
 
     public FenceControl()
     {
@@ -348,23 +352,45 @@ public partial class FenceControl : System.Windows.Controls.UserControl
     // ── Sorting (within each group if grouped) ──────────────────
 
     private void OnSortByName(object sender, RoutedEventArgs e)
-        => SortWithinGroups((a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
+    {
+        if (_lastSortKey == "Name") _isSortAscending = !_isSortAscending;
+        else { _lastSortKey = "Name"; _isSortAscending = true; }
+
+        SortWithinGroups((a, b) => 
+        {
+            int result = string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
+            return _isSortAscending ? result : -result;
+        });
+    }
 
     private void OnSortByType(object sender, RoutedEventArgs e)
-        => SortWithinGroups((a, b) =>
+    {
+        if (_lastSortKey == "Type") _isSortAscending = !_isSortAscending;
+        else { _lastSortKey = "Type"; _isSortAscending = true; }
+
+        SortWithinGroups((a, b) =>
         {
             int c = string.Compare(a.Model.Extension, b.Model.Extension, StringComparison.OrdinalIgnoreCase);
-            return c != 0 ? c : string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
+            if (c == 0) c = string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
+            return _isSortAscending ? c : -c;
         });
+    }
 
     private void OnSortByDate(object sender, RoutedEventArgs e)
-        => SortWithinGroups((a, b) =>
+    {
+        if (_lastSortKey == "Date") _isSortAscending = !_isSortAscending;
+        else { _lastSortKey = "Date"; _isSortAscending = true; } // Ascending = Oldest First
+
+        SortWithinGroups((a, b) =>
         {
             DateTime da, db;
             try { da = System.IO.File.GetLastWriteTime(a.FullPath); } catch { da = DateTime.MinValue; }
             try { db = System.IO.File.GetLastWriteTime(b.FullPath); } catch { db = DateTime.MinValue; }
-            return db.CompareTo(da); // newest first
+            
+            int result = da.CompareTo(db);
+            return _isSortAscending ? result : -result;
         });
+    }
 
     /// <summary>
     /// Sort items within each group section.  If no headers exist, sort the entire list.
@@ -1027,7 +1053,10 @@ public partial class FenceControl : System.Windows.Controls.UserControl
 
     // ─── Smart Snapping ──────────────────────────────────────────
 
-    private const double SnapThreshold = 5;
+    // ─── Smart Snapping (optimized) ──────────────────────────────
+    private const double SnapThreshold = 24; // Increased for better "magnetic" feel
+    private const double GridSize = 10;      // Virtual grid size for alignment
+    private const double StandardGap = 12;   // Recommended gap between fences
 
     private void ApplySnapping(ref double x, ref double y, ref double w, ref double h, bool isResizing = false)
     {
@@ -1037,63 +1066,115 @@ public partial class FenceControl : System.Windows.Controls.UserControl
         double screenW = mainWin.ActualWidth;
         double screenH = mainWin.ActualHeight;
 
-        // 1. Snap to screen edges
-        if (Math.Abs(x) < SnapThreshold) x = 0;
-        if (Math.Abs((x + w) - screenW) < SnapThreshold)
+        bool snappedX = false;
+        bool snappedY = false;
+
+        // 1. Snap to screen edges (priority 1)
+        if (Math.Abs(x) < SnapThreshold) { x = 0; snappedX = true; }
+        else if (Math.Abs((x + w) - screenW) < SnapThreshold)
         {
             if (isResizing) w = screenW - x;
             else x = screenW - w;
+            snappedX = true;
         }
 
-        if (Math.Abs(y) < SnapThreshold) y = 0;
-        if (Math.Abs((y + h) - screenH) < SnapThreshold)
+        if (Math.Abs(y) < SnapThreshold) { y = 0; snappedY = true; }
+        else if (Math.Abs((y + h) - screenH) < SnapThreshold)
         {
             if (isResizing) h = screenH - y;
             else y = screenH - h;
+            snappedY = true;
         }
 
-        // 2. Snap to other fences
+        // 2. Snap to other fences (priority 2)
         if (mainWin.DataContext is MainViewModel mainVm)
         {
             foreach (var other in mainVm.Fences)
             {
                 if (other == DataContext) continue;
-                if (other.IsCollapsed) continue;
 
-                // Horizontal alignment/snapping
-                // Left edge snap
-                if (Math.Abs(x - (other.X + other.Width)) < SnapThreshold) x = other.X + other.Width;
-                else if (Math.Abs(x - other.X) < SnapThreshold) x = other.X;
-
-                // Right edge snap
-                if (Math.Abs((x + w) - other.X) < SnapThreshold)
+                // --- Horizontal alignment/snapping ---
+                if (!snappedX)
                 {
-                    if (isResizing) w = other.X - x;
-                    else x = other.X - w;
+                    // Snap to edges with GAP
+                    if (Math.Abs(x - (other.X + other.Width + StandardGap)) < SnapThreshold) 
+                        { x = other.X + other.Width + StandardGap; snappedX = true; }
+                    else if (Math.Abs((x + w) - (other.X - StandardGap)) < SnapThreshold)
+                    {
+                        if (isResizing) w = other.X - StandardGap - x;
+                        else x = other.X - StandardGap - w;
+                        snappedX = true;
+                    }
+                    // Snap to edges WITHOUT gap (perfect alignment)
+                    else if (Math.Abs(x - other.X) < SnapThreshold) 
+                        { x = other.X; snappedX = true; }
+                    else if (Math.Abs((x + w) - (other.X + other.Width)) < SnapThreshold)
+                    {
+                        if (isResizing) w = other.X + other.Width - x;
+                        else x = other.X + other.Width - w;
+                        snappedX = true;
+                    }
+                    // Snap to the other side's edge (flush)
+                    else if (Math.Abs(x - (other.X + other.Width)) < SnapThreshold)
+                        { x = other.X + other.Width; snappedX = true; }
+                    else if (Math.Abs((x + w) - other.X) < SnapThreshold)
+                    {
+                        if (isResizing) w = other.X - x;
+                        else x = other.X - w;
+                        snappedX = true;
+                    }
                 }
-                else if (Math.Abs((x + w) - (other.X + other.Width)) < SnapThreshold)
-                {
-                    if (isResizing) w = (other.X + other.Width) - x;
-                    else x = (other.X + other.Width) - w;
-                }
 
-                // Vertical alignment/snapping
-                // Top edge snap
-                if (Math.Abs(y - (other.Y + other.Height)) < SnapThreshold) y = other.Y + other.Height;
-                else if (Math.Abs(y - other.Y) < SnapThreshold) y = other.Y;
-
-                // Bottom edge snap
-                if (Math.Abs((y + h) - other.Y) < SnapThreshold)
+                // --- Vertical alignment/snapping ---
+                if (!snappedY)
                 {
-                    if (isResizing) h = other.Y - y;
-                    else y = other.Y - h;
-                }
-                else if (Math.Abs((y + h) - (other.Y + other.Height)) < SnapThreshold)
-                {
-                    if (isResizing) h = (other.Y + other.Height) - y;
-                    else y = (other.Y + other.Height) - h;
+                    // Snap to edges with GAP
+                    if (Math.Abs(y - (other.Y + other.Height + StandardGap)) < SnapThreshold) 
+                        { y = other.Y + other.Height + StandardGap; snappedY = true; }
+                    else if (Math.Abs((y + h) - (other.Y - StandardGap)) < SnapThreshold)
+                    {
+                        if (isResizing) h = other.Y - StandardGap - y;
+                        else y = other.Y - StandardGap - h;
+                        snappedY = true;
+                    }
+                    // Snap to edges WITHOUT gap (perfect alignment)
+                    else if (Math.Abs(y - other.Y) < SnapThreshold) 
+                        { y = other.Y; snappedY = true; }
+                    else if (Math.Abs((y + h) - (other.Y + other.Height)) < SnapThreshold)
+                    {
+                        if (isResizing) h = other.Y + other.Height - y;
+                        else y = other.Y + other.Height - h;
+                        snappedY = true;
+                    }
+                    // Snap to the other side's edge (flush)
+                    else if (Math.Abs(y - (other.Y + other.Height)) < SnapThreshold)
+                        { y = other.Y + other.Height; snappedY = true; }
+                    else if (Math.Abs((y + h) - other.Y) < SnapThreshold)
+                    {
+                        if (isResizing) h = other.Y - y;
+                        else y = other.Y - h;
+                        snappedY = true;
+                    }
                 }
             }
+        }
+
+        // 3. Grid alignment fallback (low priority)
+        // Only snap to grid if not already snapped to an object/screen edge
+        if (!snappedX && !isResizing)
+        {
+            x = Math.Round(x / GridSize) * GridSize;
+        }
+        if (!snappedY && !isResizing)
+        {
+            y = Math.Round(y / GridSize) * GridSize;
+        }
+        
+        // If resizing, we also want the resizing edge to potentially snap to grid
+        if (isResizing)
+        {
+            if (!snappedX) w = Math.Round(w / GridSize) * GridSize;
+            if (!snappedY) h = Math.Round(h / GridSize) * GridSize;
         }
     }
 
