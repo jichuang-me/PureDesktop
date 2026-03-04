@@ -1,10 +1,8 @@
 # PureDesktop v1.1.0
 
-[English](#english) | [简体中文](#简体中文)
+[English](#english-description) | [简体中文](#简体中文说明)
 
 ---
-
-<a name="english"></a>
 
 ## English Description
 
@@ -48,8 +46,6 @@ The current version organizes files into:
 | **Ctrl + V** | Paste files into a fence |
 
 ---
-
-<a name="简体中文"></a>
 
 ## 简体中文说明
 
